@@ -1,5 +1,7 @@
 FROM buildpack-deps:wheezy-scm
 
+MAINTAINER vicamo@gmail.com
+
 ENV JAVA_VERSION=6b45 \
 	JAVA_DEBIAN_VERSION=6u45-0~webupd8~8
 

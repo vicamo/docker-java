@@ -1,5 +1,7 @@
 FROM buildpack-deps:sid-scm
 
+MAINTAINER vicamo@gmail.com
+
 ENV JAVA_VERSION=9b55 \
 	JAVA_DEBIAN_VERSION=9b55-1~webupd8~0
 

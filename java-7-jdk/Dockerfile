@@ -1,5 +1,7 @@
 FROM buildpack-deps:jessie-scm
 
+MAINTAINER vicamo@gmail.com
+
 ENV JAVA_VERSION=7u76 \
 	JAVA_DEBIAN_VERSION=7u76+7u60arm-0~webupd8~0
 
