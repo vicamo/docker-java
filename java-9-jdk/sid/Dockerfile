@@ -2,7 +2,9 @@ FROM buildpack-deps:sid-scm
 
 MAINTAINER vicamo@gmail.com
 
-ENV JAVA_VERSION=9b55 \
+# Default to UTF-8 file.encoding
+ENV LANG=C.UTF-8 \
+	JAVA_VERSION=9b55 \
 	JAVA_DEBIAN_VERSION=9b55-1~webupd8~0
 
 RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" > /etc/apt/sources.list.d/webupd8team-ubuntu-java.list \

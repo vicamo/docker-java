@@ -1,6 +1,8 @@
 FROM vicamo/buildpack-deps:trusty-scm
 
-ENV JAVA_VERSION=7u76 \
+# Default to UTF-8 file.encoding
+ENV LANG=C.UTF-8 \
+	JAVA_VERSION=7u76 \
 	JAVA_DEBIAN_VERSION=7u76+7u60arm-0~webupd8~0
 
 RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main" > /etc/apt/sources.list.d/webupd8team-ubuntu-java.list \
