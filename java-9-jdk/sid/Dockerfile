@@ -5,7 +5,7 @@ MAINTAINER vicamo@gmail.com
 # Default to UTF-8 file.encoding
 ENV LANG=C.UTF-8 \
 	JAVA_VERSION=9b57 \
-	JAVA_DEBIAN_VERSION=9b57-1~webupd8~0 
+	JAVA_DEBIAN_VERSION=9b57-1~webupd8~0
 
 RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" > /etc/apt/sources.list.d/webupd8team-ubuntu-java.list \
 	&& apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C2518248EEA14886 \

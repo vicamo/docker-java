@@ -4,7 +4,7 @@ MAINTAINER vicamo@gmail.com
 
 # Default to UTF-8 file.encoding
 ENV LANG=C.UTF-8 \
-	JAVA_VERSION=6b45 \
+	JAVA_VERSION=6u45 \
 	JAVA_DEBIAN_VERSION=6u45-0~webupd8~8
 
 RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" > /etc/apt/sources.list.d/webupd8team-ubuntu-java.list \

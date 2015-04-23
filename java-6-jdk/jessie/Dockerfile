@@ -1,11 +1,13 @@
-FROM vicamo/buildpack-deps:trusty-scm
+FROM buildpack-deps:jessie-scm
+
+MAINTAINER vicamo@gmail.com
 
 # Default to UTF-8 file.encoding
 ENV LANG=C.UTF-8 \
 	JAVA_VERSION=6u45 \
 	JAVA_DEBIAN_VERSION=6u45-0~webupd8~8
 
-RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main" > /etc/apt/sources.list.d/webupd8team-ubuntu-java.list \
+RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" > /etc/apt/sources.list.d/webupd8team-ubuntu-java.list \
 	&& apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C2518248EEA14886 \
 	&& echo "debconf shared/accepted-oracle-license-v1-1 select true" | debconf-set-selections \
 	&& echo "debconf shared/accepted-oracle-license-v1-1 seen true" | debconf-set-selections \
