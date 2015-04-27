@@ -10,9 +10,9 @@ FROM vicamo/buildpack-deps:vivid-scm
 # For CA_CERTIFICATES_JAVA_VERSION, see https://bugs.debian.org/775775
 # and https://github.com/docker-library/java/issues/19#issuecomment-70546872
 ENV LANG=C.UTF-8 \
-	JAVA_VERSION=8u40 \
-	JAVA_DEBIAN_VERSION=8u40-b27-1 \
-	CA_CERTIFICATES_JAVA_VERSION=20140324
+	JAVA_VERSION=8u45 \
+	JAVA_DEBIAN_VERSION=8u45-b14-1 \
+	CA_CERTIFICATES_JAVA_VERSION=8u45
 
 RUN apt-get update \
 	&& apt-get install --no-install-recommends -y --force-yes \

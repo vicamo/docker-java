@@ -9,7 +9,7 @@ MAINTAINER vicamo@gmail.com
 
 # Default to UTF-8 file.encoding
 ENV LANG=C.UTF-8 \
-	JAVA_VERSION=7y75 \
+	JAVA_VERSION=7u75 \
 	JAVA_DEBIAN_VERSION=7u75-2.5.4-2
 
 RUN apt-get update \
