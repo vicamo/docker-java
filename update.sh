@@ -27,20 +27,20 @@ for variant in ${variants[@]}; do
 	case "$flavor" in
 		openjdk)
 			debianVersion="$(set -x; docker run --rm "$dist" bash -c "apt-get update &> /dev/null && apt-cache show $flavor-$javaVersion-$javaType | grep '^Version: ' | head -1 | cut -d' ' -f2")"
-			fullVersion="${debianVersion%%-*}"
 			;;
 		java)
 			debianVersion="$(set -x; docker run --rm "$dist" bash -c "echo 'deb http://ppa.launchpad.net/webupd8team/java/ubuntu devel main' > /etc/apt/sources.list.d/webupd8team-ubuntu-java.list && apt-get update &> /dev/null && apt-cache show oracle-java$javaVersion-installer | grep '^Version: ' | head -1 | cut -d' ' -f2")"
-			fullVersion="${debianVersion%%-*}"
 			;;
 	esac
 	
-	if [ "$fullVersion" ]; then
+	if [ "$debianVersion" ]; then
+		fullVersion="${debianVersion%%-*}"
+		fullVersion="${fullVersion%%+*}"
 		(
 			set -x
 			sed -ri '
-				s/(JAVA_VERSION)=[^ ]+/\1='"$fullVersion"'/g;
-				s/(JAVA_DEBIAN_VERSION)=[^ ]+/\1='"$debianVersion"'/g;
+				s/(\<JAVA_VERSION)=[^ ]+/\1='"$fullVersion"'/g;
+				s/(\<JAVA_DEBIAN_VERSION)=[^ ]+/\1='"$debianVersion"'/g;
 			' "$variant/Dockerfile"
 		)
 	fi

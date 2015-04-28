@@ -2,7 +2,7 @@ FROM vicamo/buildpack-deps:vivid-scm
 
 # Default to UTF-8 file.encoding
 ENV LANG=C.UTF-8 \
-	JAVA_VERSION=8u45+8u33arm \
+	JAVA_VERSION=8u45 \
 	JAVA_DEBIAN_VERSION=8u45+8u33arm-1~webupd8~0
 
 RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu vivid main" > /etc/apt/sources.list.d/webupd8team-ubuntu-java.list \

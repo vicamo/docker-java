@@ -12,7 +12,7 @@ FROM vicamo/buildpack-deps:vivid-curl
 ENV LANG=C.UTF-8 \
 	JAVA_VERSION=8u45 \
 	JAVA_DEBIAN_VERSION=8u45-b14-1 \
-	CA_CERTIFICATES_JAVA_VERSION=8u45
+	CA_CERTIFICATES_JAVA_VERSION=20140324
 
 RUN apt-get update \
 	&& apt-get install --no-install-recommends -y --force-yes \
