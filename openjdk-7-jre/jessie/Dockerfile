@@ -9,8 +9,8 @@ MAINTAINER vicamo@gmail.com
 
 # Default to UTF-8 file.encoding
 ENV LANG=C.UTF-8 \
-	JAVA_VERSION=7u75 \
-	JAVA_DEBIAN_VERSION=7u75-2.5.4-2
+	JAVA_VERSION=7u79 \
+	JAVA_DEBIAN_VERSION=7u79-2.5.5-1~deb8u1
 
 RUN apt-get update \
 	&& apt-get install --no-install-recommends -y --force-yes \
