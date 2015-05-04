@@ -8,13 +8,11 @@ MAINTAINER vicamo@gmail.com
 #       really hairy.
 
 # Default to UTF-8 file.encoding
-ENV LANG=C.UTF-8 \
-	JAVA_VERSION=7u79 \
-	JAVA_DEBIAN_VERSION=7u79-2.5.5-1~deb7u1
+ENV LANG=C.UTF-8
 
 RUN apt-get update \
 	&& apt-get install --no-install-recommends -y --force-yes \
-		openjdk-7-jdk="$JAVA_DEBIAN_VERSION" \
+		openjdk-7-jdk \
 		unzip \
 	&& apt-get clean \
 	&& rm -f /var/lib/apt/lists/*_dists_*

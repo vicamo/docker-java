@@ -1,9 +1,7 @@
 FROM vicamo/buildpack-deps:vivid-scm
 
 # Default to UTF-8 file.encoding
-ENV LANG=C.UTF-8 \
-	JAVA_VERSION=9b59 \
-	JAVA_DEBIAN_VERSION=9b59-1~webupd8~0
+ENV LANG=C.UTF-8
 
 RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu vivid main" > /etc/apt/sources.list.d/webupd8team-ubuntu-java.list \
 	&& apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C2518248EEA14886 \
@@ -11,7 +9,7 @@ RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu vivid main" > /et
 	&& echo "debconf shared/accepted-oracle-license-v1-1 seen true" | debconf-set-selections \
 	&& apt-get update \
 	&& apt-get install --no-install-recommends -y --force-yes \
-		oracle-java9-installer="$JAVA_DEBIAN_VERSION" \
+		oracle-java9-installer \
 		unzip \
 	&& apt-get clean \
 	&& rm -rf /var/cache/oracle-jdk9-installer \

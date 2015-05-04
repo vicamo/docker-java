@@ -6,13 +6,11 @@ FROM vicamo/buildpack-deps:trusty-curl
 #       really hairy.
 
 # Default to UTF-8 file.encoding
-ENV LANG=C.UTF-8 \
-	JAVA_VERSION=7u79 \
-	JAVA_DEBIAN_VERSION=7u79-2.5.5-0ubuntu0.14.04.2
+ENV LANG=C.UTF-8
 
 RUN apt-get update \
 	&& apt-get install --no-install-recommends -y --force-yes \
-		openjdk-7-jre-headless="$JAVA_DEBIAN_VERSION" \
+		openjdk-7-jre-headless \
 		unzip \
 	&& apt-get clean \
 	&& rm -f /var/lib/apt/lists/*_dists_*

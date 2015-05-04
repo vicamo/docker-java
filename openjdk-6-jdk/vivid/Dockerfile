@@ -6,13 +6,11 @@ FROM vicamo/buildpack-deps:vivid-scm
 #       really hairy.
 
 # Default to UTF-8 file.encoding
-ENV LANG=C.UTF-8 \
-	JAVA_VERSION=6b35 \
-	JAVA_DEBIAN_VERSION=6b35-1.13.7-1ubuntu1
+ENV LANG=C.UTF-8
 
 RUN apt-get update \
 	&& apt-get install --no-install-recommends -y --force-yes \
-		openjdk-6-jdk="$JAVA_DEBIAN_VERSION" \
+		openjdk-6-jdk \
 		unzip \
 	&& apt-get clean \
 	&& rm -f /var/lib/apt/lists/*_dists_*

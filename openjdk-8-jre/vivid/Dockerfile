@@ -10,14 +10,12 @@ FROM vicamo/buildpack-deps:vivid-curl
 # For CA_CERTIFICATES_JAVA_VERSION, see https://bugs.debian.org/775775
 # and https://github.com/docker-library/java/issues/19#issuecomment-70546872
 ENV LANG=C.UTF-8 \
-	JAVA_VERSION=8u45 \
-	JAVA_DEBIAN_VERSION=8u45-b14-1 \
 	CA_CERTIFICATES_JAVA_VERSION=20140324
 
 RUN apt-get update \
 	&& apt-get install --no-install-recommends -y --force-yes \
 		ca-certificates-java="$CA_CERTIFICATES_JAVA_VERSION" \
-		openjdk-8-jre-headless="$JAVA_DEBIAN_VERSION" \
+		openjdk-8-jre-headless \
 		unzip \
 	&& /var/lib/dpkg/info/ca-certificates-java.postinst configure \
 	&& apt-get clean \
