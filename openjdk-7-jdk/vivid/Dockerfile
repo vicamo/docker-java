@@ -1,4 +1,6 @@
-FROM vicamo/buildpack-deps:vivid-scm
+FROM buildpack-deps:vivid-scm
+
+MAINTAINER vicamo@gmail.com
 
 # A few problems with compiling Java from source:
 #  1. Oracle.  Licensing prevents us from redistributing the official JDK.

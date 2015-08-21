@@ -1,4 +1,6 @@
-FROM vicamo/buildpack-deps:vivid-scm
+FROM buildpack-deps:vivid-scm
+
+MAINTAINER vicamo@gmail.com
 
 # Default to UTF-8 file.encoding
 ENV LANG=C.UTF-8
