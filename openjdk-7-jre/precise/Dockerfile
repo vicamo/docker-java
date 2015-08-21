@@ -1,4 +1,4 @@
-FROM buildpack-deps:sid-scm
+FROM buildpack-deps:precise-curl
 
 MAINTAINER vicamo@gmail.com
 
@@ -12,7 +12,7 @@ ENV LANG=C.UTF-8
 
 RUN apt-get update \
 	&& apt-get install --no-install-recommends -y --force-yes \
-		openjdk-6-jdk \
+		openjdk-7-jre-headless \
 		unzip \
 	&& apt-get clean \
 	&& rm -f /var/lib/apt/lists/*_dists_*

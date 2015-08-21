@@ -1,4 +1,4 @@
-FROM buildpack-deps:sid-curl
+FROM buildpack-deps:wily-curl
 
 MAINTAINER vicamo@gmail.com
 
@@ -8,12 +8,21 @@ MAINTAINER vicamo@gmail.com
 #       really hairy.
 
 # Default to UTF-8 file.encoding
-ENV LANG=C.UTF-8
+#
+# For CA_CERTIFICATES_JAVA_VERSION, see https://bugs.debian.org/775775
+# and https://github.com/docker-library/java/issues/19#issuecomment-70546872
+ENV LANG=C.UTF-8 \
+	CA_CERTIFICATES_JAVA_VERSION=20140324
 
+# For libfontconfig1, see https://bugs.debian.org/793210
+# and https://github.com/docker-library/java/issues/46#issuecomment-119026586
 RUN apt-get update \
 	&& apt-get install --no-install-recommends -y --force-yes \
-		openjdk-6-jre-headless \
+		ca-certificates-java="$CA_CERTIFICATES_JAVA_VERSION" \
+		libfontconfig1 \
+		openjdk-8-jre-headless \
 		unzip \
+	&& /var/lib/dpkg/info/ca-certificates-java.postinst configure \
 	&& apt-get clean \
 	&& rm -f /var/lib/apt/lists/*_dists_*
 
