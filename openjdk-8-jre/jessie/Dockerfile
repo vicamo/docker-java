@@ -14,11 +14,14 @@ MAINTAINER vicamo@gmail.com
 ENV LANG=C.UTF-8 \
 	CA_CERTIFICATES_JAVA_VERSION=20140324
 
+# For libfontconfig1, see https://bugs.debian.org/793210
+# and https://github.com/docker-library/java/issues/46#issuecomment-119026586
 RUN set -x \
 	&& echo 'deb http://httpredir.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/jessie-backports.list \
 	&& apt-get update \
 	&& apt-get install --no-install-recommends -y --force-yes \
 		ca-certificates-java="$CA_CERTIFICATES_JAVA_VERSION" \
+		libfontconfig1 \
 		openjdk-8-jre-headless \
 		unzip \
 	&& /var/lib/dpkg/info/ca-certificates-java.postinst configure \
