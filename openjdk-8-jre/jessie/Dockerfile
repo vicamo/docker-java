@@ -19,7 +19,7 @@ ENV LANG=C.UTF-8 \
 RUN set -x \
 	&& echo 'deb http://httpredir.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/jessie-backports.list \
 	&& apt-get update \
-	&& apt-get install --no-install-recommends -y --force-yes \
+	&& apt-get install --no-install-recommends -y \
 		ca-certificates-java="$CA_CERTIFICATES_JAVA_VERSION" \
 		libfontconfig1 \
 		openjdk-8-jre-headless \

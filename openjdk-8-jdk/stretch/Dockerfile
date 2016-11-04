@@ -15,7 +15,7 @@ ENV LANG=C.UTF-8 \
 	CA_CERTIFICATES_JAVA_VERSION=20140324
 
 RUN apt-get update \
-	&& apt-get install --no-install-recommends -y --force-yes \
+	&& apt-get install --no-install-recommends -y \
 		ca-certificates-java="$CA_CERTIFICATES_JAVA_VERSION" \
 		openjdk-8-jdk \
 		unzip \

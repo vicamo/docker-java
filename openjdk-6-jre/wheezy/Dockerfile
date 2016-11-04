@@ -11,7 +11,7 @@ MAINTAINER vicamo@gmail.com
 ENV LANG=C.UTF-8
 
 RUN apt-get update \
-	&& apt-get install --no-install-recommends -y --force-yes \
+	&& apt-get install --no-install-recommends -y \
 		openjdk-6-jre-headless \
 		unzip \
 	&& apt-get clean \

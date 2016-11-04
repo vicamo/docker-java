@@ -10,7 +10,7 @@ RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" > /
 	&& echo "debconf shared/accepted-oracle-license-v1-1 select true" | debconf-set-selections \
 	&& echo "debconf shared/accepted-oracle-license-v1-1 seen true" | debconf-set-selections \
 	&& apt-get update \
-	&& apt-get install --no-install-recommends -y --force-yes \
+	&& apt-get install --no-install-recommends -y \
 		oracle-java8-installer \
 		unzip \
 	&& apt-get clean \
