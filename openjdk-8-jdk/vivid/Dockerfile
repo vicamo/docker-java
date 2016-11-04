@@ -8,15 +8,11 @@ MAINTAINER vicamo@gmail.com
 #       really hairy.
 
 # Default to UTF-8 file.encoding
-#
-# For CA_CERTIFICATES_JAVA_VERSION, see https://bugs.debian.org/775775
-# and https://github.com/docker-library/java/issues/19#issuecomment-70546872
-ENV LANG=C.UTF-8 \
-	CA_CERTIFICATES_JAVA_VERSION=20140324
+ENV LANG=C.UTF-8
 
 RUN apt-get update \
 	&& apt-get install --no-install-recommends -y \
-		ca-certificates-java="$CA_CERTIFICATES_JAVA_VERSION" \
+		ca-certificates-java \
 		openjdk-8-jdk \
 		unzip \
 	&& /var/lib/dpkg/info/ca-certificates-java.postinst configure \
