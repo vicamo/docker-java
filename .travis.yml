@@ -2,12 +2,92 @@ language: bash
 services: docker
 
 env:
-  - VERSION=openjdk-8-jre
-  - VERSION=openjdk-8-jdk
-  - VERSION=openjdk-7-jre
-  - VERSION=openjdk-7-jdk
-  - VERSION=openjdk-6-jre
-  - VERSION=openjdk-6-jdk
+  global:
+  matrix:
+  - VERSION=java-6-jdk/buster
+  - VERSION=java-6-jdk/jessie
+  - VERSION=java-6-jdk/sid
+  - VERSION=java-6-jdk/stretch
+  - VERSION=java-6-jdk/trusty
+  - VERSION=java-6-jdk/wheezy
+  - VERSION=java-6-jdk/xenial
+  - VERSION=java-7-jdk/buster
+  - VERSION=java-7-jdk/jessie
+  - VERSION=java-7-jdk/sid
+  - VERSION=java-7-jdk/stretch
+  - VERSION=java-7-jdk/trusty
+  - VERSION=java-7-jdk/wheezy
+  - VERSION=java-7-jdk/xenial
+  - VERSION=java-7-jdk/zesty
+  - VERSION=java-8-jdk/artful
+  - VERSION=java-8-jdk/buster
+  - VERSION=java-8-jdk/jessie
+  - VERSION=java-8-jdk/sid
+  - VERSION=java-8-jdk/stretch
+  - VERSION=java-8-jdk/trusty
+  - VERSION=java-8-jdk/wheezy
+  - VERSION=java-8-jdk/xenial
+  - VERSION=java-8-jdk/zesty
+  - VERSION=java-9-jdk/artful
+  - VERSION=java-9-jdk/buster
+  - VERSION=java-9-jdk/jessie
+  - VERSION=java-9-jdk/sid
+  - VERSION=java-9-jdk/stretch
+  - VERSION=java-9-jdk/trusty
+  - VERSION=java-9-jdk/wheezy
+  - VERSION=java-9-jdk/xenial
+  - VERSION=java-9-jdk/zesty
+  - VERSION=openjdk-6-jdk/trusty
+  - VERSION=openjdk-6-jdk/wheezy
+  - VERSION=openjdk-6-jre/trusty
+  - VERSION=openjdk-6-jre/wheezy
+  - VERSION=openjdk-7-jdk/jessie
+  - VERSION=openjdk-7-jdk/trusty
+  - VERSION=openjdk-7-jdk/wheezy
+  - VERSION=openjdk-7-jdk/xenial
+  - VERSION=openjdk-7-jre/jessie
+  - VERSION=openjdk-7-jre/trusty
+  - VERSION=openjdk-7-jre/wheezy
+  - VERSION=openjdk-7-jre/xenial
+  - VERSION=openjdk-8-jdk/artful
+  - VERSION=openjdk-8-jdk/buster
+  - VERSION=openjdk-8-jdk/jessie
+  - VERSION=openjdk-8-jdk/sid
+  - VERSION=openjdk-8-jdk/stretch
+  - VERSION=openjdk-8-jdk/trusty
+  - VERSION=openjdk-8-jdk/xenial
+  - VERSION=openjdk-8-jdk/zesty
+  - VERSION=openjdk-8-jre/artful
+  - VERSION=openjdk-8-jre/buster
+  - VERSION=openjdk-8-jre/jessie
+  - VERSION=openjdk-8-jre/sid
+  - VERSION=openjdk-8-jre/stretch
+  - VERSION=openjdk-8-jre/trusty
+  - VERSION=openjdk-8-jre/xenial
+  - VERSION=openjdk-8-jre/zesty
+  - VERSION=openjdk-9-jdk/artful
+  - VERSION=openjdk-9-jdk/buster
+  - VERSION=openjdk-9-jdk/sid
+  - VERSION=openjdk-9-jdk/stretch
+  - VERSION=openjdk-9-jdk/xenial
+  - VERSION=openjdk-9-jdk/zesty
+  - VERSION=openjdk-9-jre/artful
+  - VERSION=openjdk-9-jre/buster
+  - VERSION=openjdk-9-jre/sid
+  - VERSION=openjdk-9-jre/stretch
+  - VERSION=openjdk-9-jre/xenial
+  - VERSION=openjdk-9-jre/zesty
+
+matrix:
+  fast_finish: true
+  allow_failures:
+  - env: VERSION=openjdk-8-jdk/jessie
+  - env: VERSION=openjdk-8-jre/jessie
+  - env: VERSION=openjdk-9-jdk/xenial
+
+branches:
+  only:
+  - master
 
 install:
   - git clone https://github.com/docker-library/official-images.git ~/official-images
@@ -15,7 +95,11 @@ install:
 before_script:
   - env | sort
   - cd "$VERSION"
-  - image="java:$VERSION"
+  - if [ -n "$(echo $VERSION | grep openjdk)" ]; then
+      image="${TRAVIS_REPO_SLUG%%/*}/java:${VERSION##*/}-${VERSION%%/*}";
+    else
+      image="${TRAVIS_REPO_SLUG%%/*}/java:${VERSION##*/}-oracle-${VERSION%%/*}";
+    fi
 
 script:
   - docker build -t "$image" .
