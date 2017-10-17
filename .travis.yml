@@ -4,21 +4,6 @@ services: docker
 env:
   global:
   matrix:
-  - VERSION=java-6-jdk/buster
-  - VERSION=java-6-jdk/jessie
-  - VERSION=java-6-jdk/sid
-  - VERSION=java-6-jdk/stretch
-  - VERSION=java-6-jdk/trusty
-  - VERSION=java-6-jdk/wheezy
-  - VERSION=java-6-jdk/xenial
-  - VERSION=java-7-jdk/buster
-  - VERSION=java-7-jdk/jessie
-  - VERSION=java-7-jdk/sid
-  - VERSION=java-7-jdk/stretch
-  - VERSION=java-7-jdk/trusty
-  - VERSION=java-7-jdk/wheezy
-  - VERSION=java-7-jdk/xenial
-  - VERSION=java-7-jdk/zesty
   - VERSION=java-8-jdk/artful
   - VERSION=java-8-jdk/buster
   - VERSION=java-8-jdk/jessie
