@@ -1,6 +1,10 @@
-FROM buildpack-deps:jessie-scm
+#
+# NOTE: THIS DOCKERFILE IS GENERATED VIA "update.sh"
+#
+# PLEASE DO NOT EDIT IT DIRECTLY.
+#
 
-MAINTAINER vicamo@gmail.com
+FROM buildpack-deps:jessie-scm
 
 # A few problems with compiling Java from source:
 #  1. Oracle.  Licensing prevents us from redistributing the official JDK.
@@ -8,14 +12,15 @@ MAINTAINER vicamo@gmail.com
 #       really hairy.
 
 # Default to UTF-8 file.encoding
-ENV LANG=C.UTF-8
+ENV LANG C.UTF-8
 
-RUN apt-get update \
+RUN set -x \
+	&& apt-get update \
 	&& apt-get install --no-install-recommends -y \
 		openjdk-7-jdk \
 		unzip \
 	&& apt-get clean \
-	&& rm -f /var/lib/apt/lists/*_dists_*
+	&& rm -rf /var/lib/apt/lists/*_dists_*
 
 # If you're reading this and have any feedback on how this image could be
 #   improved, please open an issue or a pull request so we can discuss it!
