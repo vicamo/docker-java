@@ -1,6 +1,10 @@
-FROM buildpack-deps:stretch-curl
+#
+# NOTE: THIS DOCKERFILE IS GENERATED VIA "update.sh"
+#
+# PLEASE DO NOT EDIT IT DIRECTLY.
+#
 
-MAINTAINER vicamo@gmail.com
+FROM buildpack-deps:stretch-curl
 
 # A few problems with compiling Java from source:
 #  1. Oracle.  Licensing prevents us from redistributing the official JDK.
@@ -8,21 +12,18 @@ MAINTAINER vicamo@gmail.com
 #       really hairy.
 
 # Default to UTF-8 file.encoding
-ENV LANG=C.UTF-8
+ENV LANG C.UTF-8
 
-# For libfontconfig1, see https://bugs.debian.org/793210
-# and https://github.com/docker-library/java/issues/46#issuecomment-119026586
 RUN set -x \
-	&& echo 'deb http://httpredir.debian.org/debian stretch-backports main' > /etc/apt/sources.list.d/stretch-backports.list \
+	&& (echo 'deb http://httpredir.debian.org/debian stretch-backports main' > /etc/apt/sources.list.d/stretch-backports.list) \
 	&& apt-get update \
 	&& apt-get install --no-install-recommends -y \
-		ca-certificates-java \
-		libfontconfig1 \
 		openjdk-9-jre-headless \
 		unzip \
+		ca-certificates-java="20140324" \
 	&& /var/lib/dpkg/info/ca-certificates-java.postinst configure \
 	&& apt-get clean \
-	&& rm -f /var/lib/apt/lists/*_dists_*
+	&& rm -rf /var/lib/apt/lists/*_dists_*
 
 # If you're reading this and have any feedback on how this image could be
 #   improved, please open an issue or a pull request so we can discuss it!
