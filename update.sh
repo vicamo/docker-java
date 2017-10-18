@@ -48,6 +48,95 @@ declare -A variants=(
 	[jdk]='scm'
 )
 
+declare -A debCache=()
+declare -A debVerCache=()
+dpkgArch="$(dpkg --print-architecture)"
+debian-latest-version() {
+	local package="$1"; shift
+	local dist="$1"; shift
+	local suite="$1"; shift
+
+	local debVerCacheKey="$package-$suite"
+	if [ -n "${debVerCache[$debVerCacheKey]:-}" ]; then
+		echo "${debVerCache[$debVerCacheKey]}"
+		return
+	fi
+
+	local debMirror;
+	local secMirror;
+	case "$dist" in
+		debian)
+			debMirror='https://deb.debian.org/debian'
+			secMirror='http://security.debian.org'
+			;;
+		ubuntu)
+			debMirror='http://archive.ubuntu.com/ubuntu'
+			secMirror='http://security.ubuntu.com/ubuntu'
+			;;
+	esac
+
+	local remotes=( "$debMirror/dists/$suite/main" )
+	case "$suite" in
+		sid) ;;
+
+		experimental)
+			remotes+=( "$debMirror/dists/sid/main" )
+			;;
+
+		*-backports)
+			suite="${suite%-backports}"
+			remotes+=( "$debMirror/dists/$suite/main" )
+			;&
+		*)
+			remotes+=(
+				"$debMirror/dists/$suite-updates/main"
+				"$secMirror/dists/$suite/updates/main"
+			)
+			;;
+	esac
+
+	local latestVersion= remote=
+	for remote in "${remotes[@]}"; do
+		if [ -z "${debCache[$remote]:-}" ]; then
+			local urlBase="$remote/binary-$dpkgArch/Packages" url= decomp=
+			for comp in xz bz2 gz ''; do
+				if wget --quiet --spider "$urlBase.$comp"; then
+					url="$urlBase.$comp"
+					case "$comp" in
+						xz) decomp='xz -d' ;;
+						bz2) decomp='bunzip2' ;;
+						gz) decomp='gunzip' ;;
+						'') decomp='cat' ;;
+					esac
+					break
+				fi
+			done
+			if [ -z "$url" ]; then
+				continue
+			fi
+			debCache[$remote]="$(wget -qO- "$url" | eval "$decomp")"
+		fi
+		IFS=$'\n'
+		local versions=( $(
+			echo "${debCache[$remote]}" \
+				| awk -F ': ' '
+					$1 == "Package" { pkg = $2 }
+					pkg == "'"$package"'" && $1 == "Version" { print $2 }
+				'
+		) )
+		unset IFS
+		local version=
+		for version in "${versions[@]}"; do
+			if [ -z "$latestVersion" ] || dpkg --compare-versions "$version" '>>' "$latestVersion"; then
+				latestVersion="$version"
+			fi
+		done
+	done
+
+	debVerCache[$debVerCacheKey]="$latestVersion"
+	echo "$latestVersion"
+}
+
 travisEnv=
 for version in "${versions[@]}"; do
 	javaVersion="${version%%/*}" # "6-jdk"
@@ -58,18 +147,25 @@ for version in "${versions[@]}"; do
 	addSuite="${addSuites[$javaVersion-$suite]}"
 	variant="${variants[$javaType]}"
 
+	javaHome="/usr/lib/jvm/java-$javaVersion-openjdk-$dpkgArch"
+	if [ "$javaType" = 'jre' -a "$javaVersion" -lt 9 ]; then
+		# woot, this hackery stopped in OpenJDK 9+!
+		javaHome+='/jre'
+	fi
+
 	needCaHack=
 	if [ "$javaVersion" -ge 8 -a "$suite" != 'sid' ]; then
 		# "20140324" is broken (jessie), but "20160321" is fixed (sid)
 		needCaHack=1
 	fi
 
-	dist="${doru[$suite]}:${addSuite:-$suite}"
 	debianPackage="openjdk-$javaVersion-$javaType"
 	if [ "$javaType" = 'jre' -o "$javaVersion" -ge 9 ]; then
 		# "openjdk-9" in Debian introduced an "openjdk-9-jdk-headless" package \o/
 		debianPackage+='-headless'
 	fi
+	dist="${doru[$suite]}:${addSuite:-$suite}"
+	debSuite="${addSuite:-$suite}"
 
 	cat > "$version/Dockerfile" <<-EOD
 		#
@@ -92,6 +188,17 @@ for version in "${versions[@]}"; do
 		ENV LANG C.UTF-8
 
 	EOD
+
+	if [ "$needCaHack" ]; then
+		debian-latest-version 'ca-certificates-java' "${doru[$suite]}" "$debSuite" > /dev/null # prime the cache
+		caCertHackVersion="$(debian-latest-version 'ca-certificates-java' "${doru[$suite]}" "$debSuite")"
+		cat >> "$version/Dockerfile" <<-EOD
+			# see https://bugs.debian.org/775775
+			# and https://github.com/docker-library/java/issues/19#issuecomment-70546872
+			ENV CA_CERTIFICATES_JAVA_VERSION $caCertHackVersion
+
+		EOD
+	fi
 
 	cat >> "$version/Dockerfile" <<-EOD
 		RUN set -x \\
@@ -116,7 +223,7 @@ EOD
 EOD
 	if [ "$needCaHack" ]; then
 			cat >> "$version/Dockerfile" <<EOD
-		ca-certificates-java="20140324" \\
+		ca-certificates-java="\$CA_CERTIFICATES_JAVA_VERSION" \\
 	&& /var/lib/dpkg/info/ca-certificates-java.postinst configure \\
 EOD
 	fi
@@ -148,13 +255,15 @@ EOD
 
 		alpineMirror="http://dl-cdn.alpinelinux.org/alpine/v${alpineVersion}/community/x86_64"
 		alpinePackageVersion="$(
-			curl -fsSL "$alpineMirror/APKINDEX.tar.gz" \
+			wget -qO- "$alpineMirror/APKINDEX.tar.gz" \
 				| tar --extract --gzip --to-stdout APKINDEX \
 				| awk -F: '$1 == "P" { pkg = $2 } pkg == "'"$alpinePackage"'" && $1 == "V" { print $2 }'
 		)"
 
 		alpineFullVersion="${alpinePackageVersion/./u}"
 		alpineFullVersion="${alpineFullVersion%%.*}"
+
+		echo "$version: $alpineFullVersion (alpine $alpinePackageVersion)"
 
 		cat > "$version/$variant/Dockerfile" <<-EOD
 			#

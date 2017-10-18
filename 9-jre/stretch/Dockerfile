@@ -14,6 +14,10 @@ FROM buildpack-deps:stretch-curl
 # Default to UTF-8 file.encoding
 ENV LANG C.UTF-8
 
+# see https://bugs.debian.org/775775
+# and https://github.com/docker-library/java/issues/19#issuecomment-70546872
+ENV CA_CERTIFICATES_JAVA_VERSION 20170531+nmu1
+
 RUN set -x \
 	&& (echo 'deb http://deb.debian.org/debian stretch-backports main' > /etc/apt/sources.list.d/stretch-backports.list) \
 	&& apt-get update \
@@ -22,7 +26,7 @@ RUN set -x \
 		openjdk-9-jre-headless \
 		unzip \
 		xz-utils \
-		ca-certificates-java="20140324" \
+		ca-certificates-java="$CA_CERTIFICATES_JAVA_VERSION" \
 	&& /var/lib/dpkg/info/ca-certificates-java.postinst configure \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*_dists_*
