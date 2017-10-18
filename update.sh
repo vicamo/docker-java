@@ -32,6 +32,11 @@ declare -A oracleJavaSuite=(
 	[xenial]='xenial'
 	[zesty]='zesty'
 )
+declare -A alpineVersions=(
+	[7]='3.4'
+	[8]='3.4'
+	[9]='3.5'
+)
 
 declare -A addSuites=(
 	[8-jessie]='jessie-backports'
@@ -42,10 +47,6 @@ declare -A variants=(
 	[jre]='curl'
 	[jdk]='scm'
 )
-
-alpineVersion='3.5'
-alpineMirror="http://dl-cdn.alpinelinux.org/alpine/v${alpineVersion}/community/x86_64"
-curl -fsSL'#' "$alpineMirror/APKINDEX.tar.gz" | tar -zxv APKINDEX
 
 travisEnv=
 for version in "${versions[@]}"; do
@@ -132,6 +133,7 @@ EOD
 
 	variant='alpine'
 	if [ -d "$version/$variant" ]; then
+		alpineVersion="${alpineVersions[$javaVersion]}"
 		alpinePackage="openjdk$javaVersion"
 		alpineJavaHome="/usr/lib/jvm/java-1.${javaVersion}-openjdk"
 		alpinePathAdd="$alpineJavaHome/jre/bin:$alpineJavaHome/bin"
@@ -143,7 +145,14 @@ EOD
 				alpineJavaHome+="/$javaType"
 				;;
 		esac
-		alpinePackageVersion="$(awk -F: '$1 == "P" { pkg = $2 } pkg == "'"$alpinePackage"'" && $1 == "V" { print $2 }' APKINDEX)"
+
+		alpineMirror="http://dl-cdn.alpinelinux.org/alpine/v${alpineVersion}/community/x86_64"
+		alpinePackageVersion="$(
+			curl -fsSL "$alpineMirror/APKINDEX.tar.gz" \
+				| tar --extract --gzip --to-stdout APKINDEX \
+				| awk -F: '$1 == "P" { pkg = $2 } pkg == "'"$alpinePackage"'" && $1 == "V" { print $2 }'
+		)"
+
 		alpineFullVersion="${alpinePackageVersion/./u}"
 		alpineFullVersion="${alpineFullVersion%%.*}"
 
@@ -189,5 +198,3 @@ done
 
 travis="$(awk -v 'RS=\n\n' '($1 == "env:") { $0 = substr($0, 0, index($0, "matrix:") + length("matrix:") - 1)"'"$travisEnv"'" } { printf "%s%s", $0, RS }' .travis.yml)"
 echo "$travis" > .travis.yml
-
-rm APKINDEX
