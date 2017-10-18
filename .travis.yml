@@ -4,79 +4,61 @@ services: docker
 env:
   global:
   matrix:
-  - VERSION=java-8-jdk/artful
-  - VERSION=java-8-jdk/buster
-  - VERSION=java-8-jdk/jessie
-  - VERSION=java-8-jdk/sid
-  - VERSION=java-8-jdk/stretch
-  - VERSION=java-8-jdk/trusty
-  - VERSION=java-8-jdk/wheezy
-  - VERSION=java-8-jdk/xenial
-  - VERSION=java-8-jdk/zesty
-  - VERSION=java-9-jdk/artful
-  - VERSION=java-9-jdk/buster
-  - VERSION=java-9-jdk/jessie
-  - VERSION=java-9-jdk/sid
-  - VERSION=java-9-jdk/stretch
-  - VERSION=java-9-jdk/trusty
-  - VERSION=java-9-jdk/wheezy
-  - VERSION=java-9-jdk/xenial
-  - VERSION=java-9-jdk/zesty
-  - VERSION=openjdk-6-jdk/trusty
-  - VERSION=openjdk-6-jdk/wheezy
-  - VERSION=openjdk-6-jre/trusty
-  - VERSION=openjdk-6-jre/wheezy
-  - VERSION=openjdk-7-jdk/jessie
-  - VERSION=openjdk-7-jdk/jessie VARIANT=alpine
-  - VERSION=openjdk-7-jdk/trusty
-  - VERSION=openjdk-7-jdk/wheezy
-  - VERSION=openjdk-7-jdk/xenial
-  - VERSION=openjdk-7-jre/jessie
-  - VERSION=openjdk-7-jre/jessie VARIANT=alpine
-  - VERSION=openjdk-7-jre/trusty
-  - VERSION=openjdk-7-jre/wheezy
-  - VERSION=openjdk-7-jre/xenial
-  - VERSION=openjdk-8-jdk/artful
-  - VERSION=openjdk-8-jdk/buster
-  - VERSION=openjdk-8-jdk/jessie
-  - VERSION=openjdk-8-jdk/jessie VARIANT=alpine
-  - VERSION=openjdk-8-jdk/sid
-  - VERSION=openjdk-8-jdk/stretch
-  - VERSION=openjdk-8-jdk/trusty
-  - VERSION=openjdk-8-jdk/xenial
-  - VERSION=openjdk-8-jdk/zesty
-  - VERSION=openjdk-8-jre/artful
-  - VERSION=openjdk-8-jre/buster
-  - VERSION=openjdk-8-jre/jessie
-  - VERSION=openjdk-8-jre/jessie VARIANT=alpine
-  - VERSION=openjdk-8-jre/sid
-  - VERSION=openjdk-8-jre/stretch
-  - VERSION=openjdk-8-jre/trusty
-  - VERSION=openjdk-8-jre/xenial
-  - VERSION=openjdk-8-jre/zesty
-  - VERSION=openjdk-9-jdk/artful
-  - VERSION=openjdk-9-jdk/buster
-  - VERSION=openjdk-9-jdk/sid
-  - VERSION=openjdk-9-jdk/stretch
-  - VERSION=openjdk-9-jdk/xenial
-  - VERSION=openjdk-9-jdk/zesty
-  - VERSION=openjdk-9-jre/artful
-  - VERSION=openjdk-9-jre/buster
-  - VERSION=openjdk-9-jre/sid
-  - VERSION=openjdk-9-jre/stretch
-  - VERSION=openjdk-9-jre/xenial
-  - VERSION=openjdk-9-jre/zesty
+  - VERSION=6-jdk/trusty
+  - VERSION=6-jdk/wheezy
+  - VERSION=6-jre/trusty
+  - VERSION=6-jre/wheezy
+  - VERSION=7-jdk/jessie
+  - VERSION=7-jdk/jessie VARIANT=alpine
+  - VERSION=7-jdk/trusty
+  - VERSION=7-jdk/wheezy
+  - VERSION=7-jdk/xenial
+  - VERSION=7-jre/jessie
+  - VERSION=7-jre/jessie VARIANT=alpine
+  - VERSION=7-jre/trusty
+  - VERSION=7-jre/wheezy
+  - VERSION=7-jre/xenial
+  - VERSION=8-jdk/artful
+  - VERSION=8-jdk/buster
+  - VERSION=8-jdk/jessie
+  - VERSION=8-jdk/jessie VARIANT=alpine
+  - VERSION=8-jdk/sid
+  - VERSION=8-jdk/stretch
+  - VERSION=8-jdk/trusty
+  - VERSION=8-jdk/xenial
+  - VERSION=8-jdk/zesty
+  - VERSION=8-jre/artful
+  - VERSION=8-jre/buster
+  - VERSION=8-jre/jessie
+  - VERSION=8-jre/jessie VARIANT=alpine
+  - VERSION=8-jre/sid
+  - VERSION=8-jre/stretch
+  - VERSION=8-jre/trusty
+  - VERSION=8-jre/xenial
+  - VERSION=8-jre/zesty
+  - VERSION=9-jdk/artful
+  - VERSION=9-jdk/buster
+  - VERSION=9-jdk/sid
+  - VERSION=9-jdk/stretch
+  - VERSION=9-jdk/xenial
+  - VERSION=9-jdk/zesty
+  - VERSION=9-jre/artful
+  - VERSION=9-jre/buster
+  - VERSION=9-jre/sid
+  - VERSION=9-jre/stretch
+  - VERSION=9-jre/xenial
+  - VERSION=9-jre/zesty
 
 matrix:
   fast_finish: true
   allow_failures:
-  - env: VERSION=openjdk-8-jdk/jessie
-  - env: VERSION=openjdk-8-jre/jessie
-  - env: VERSION=openjdk-9-jdk/xenial
+  - env: VERSION=8-jdk/jessie
+  - env: VERSION=8-jre/jessie
+  - env: VERSION=9-jdk/xenial
 
 branches:
   only:
-  - master
+  - openjdk
 
 install:
   - git clone https://github.com/docker-library/official-images.git ~/official-images
@@ -84,11 +66,7 @@ install:
 before_script:
   - env | sort
   - cd "${VERSION}${VARIANT:+/$VARIANT}"
-  - if [ -n "$(echo $VERSION | grep openjdk)" ]; then
-      image="${TRAVIS_REPO_SLUG%%/*}/java:${VERSION##*/}-${VERSION%%/*}${VARIANT:+-$VARIANT}";
-    else
-      image="${TRAVIS_REPO_SLUG%%/*}/java:${VERSION##*/}-oracle-${VERSION%%/*}${VARIANT:+-$VARIANT}";
-    fi
+  - image="${TRAVIS_REPO_SLUG%%/*}/openjdk:${VERSION##*/}-${VERSION%%/*}${VARIANT:+-$VARIANT}";
 
 script:
   - docker build -t "$image" .

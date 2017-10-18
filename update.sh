@@ -34,8 +34,8 @@ declare -A oracleJavaSuite=(
 )
 
 declare -A addSuites=(
-	[openjdk-8-jessie]='jessie-backports'
-	[openjdk-9-stretch]='stretch-backports'
+	[8-jessie]='jessie-backports'
+	[9-stretch]='stretch-backports'
 )
 
 declare -A variants=(
@@ -49,32 +49,25 @@ curl -fsSL'#' "$alpineMirror/APKINDEX.tar.gz" | tar -zxv APKINDEX
 
 travisEnv=
 for version in "${versions[@]}"; do
-	java="${version%%/*}" # "openjdk-6-jdk"
-	flavor="${java%%-*}" # "openjdk"
-	javaVersion="${java#*-}" # "6-jdk"
+	javaVersion="${version%%/*}" # "6-jdk"
 	javaType="${javaVersion##*-}" # "jdk"
 	javaVersion="${javaVersion%-*}" # "6"
 
 	suite="${version##*/}"
-	addSuite="${addSuites[$flavor-$javaVersion-$suite]}"
+	addSuite="${addSuites[$javaVersion-$suite]}"
 	variant="${variants[$javaType]}"
 
 	needCaHack=
-	if [ "$flavor" = 'openjdk' ]; then
-		if [ "$javaVersion" -ge 8 ]; then
-			needCaHack=1
-		fi
+	if [ "$javaVersion" -ge 8 -a "$suite" != 'sid' ]; then
+		# "20140324" is broken (jessie), but "20160321" is fixed (sid)
+		needCaHack=1
 	fi
 
 	dist="${doru[$suite]}:${addSuite:-$suite}"
-	if [ "$flavor" = 'java' ]; then
-		debianPackage=oracle-java$javaVersion-installer
-	else
-		debianPackage="$flavor-$javaVersion-$javaType"
-		if [ "$javaType" = 'jre' -o "$javaVersion" -ge 9 ]; then
-			# "openjdk-9" in Debian introduced an "openjdk-9-jdk-headless" package \o/
-			debianPackage+='-headless'
-		fi
+	debianPackage="openjdk-$javaVersion-$javaType"
+	if [ "$javaType" = 'jre' -o "$javaVersion" -ge 9 ]; then
+		# "openjdk-9" in Debian introduced an "openjdk-9-jdk-headless" package \o/
+		debianPackage+='-headless'
 	fi
 
 	cat > "$version/Dockerfile" <<-EOD
@@ -114,35 +107,17 @@ EOD
 	&& apt-get install --no-install-recommends -y \\
 EOD
 
-	if [ "$flavor" = 'java' ]; then
-		cat >> "$version/Dockerfile" <<EOD
-		bzip2 \\
-		dirmngr \\
-		gnupg \\
-		unzip \\
-		xz-utils \\
-	&& (echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu ${oracleJavaSuite[$suite]} main" > /etc/apt/sources.list.d/webupd8team-ubuntu-java.list) \\
-	&& apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C2518248EEA14886 \\
-	&& (echo "debconf shared/accepted-oracle-license-v1-1 select true" | debconf-set-selections) \\
-	&& (echo "debconf shared/accepted-oracle-license-v1-1 seen true" | debconf-set-selections) \\
-	&& apt-get update \\
-	&& apt-get install --no-install-recommends -y \\
-		$debianPackage \\
-	&& rm -rf /var/cache/oracle-jdk$javaVersion-installer \\
-EOD
-	else
-		cat >> "$version/Dockerfile" <<EOD
+	cat >> "$version/Dockerfile" <<EOD
 		bzip2 \\
 		$debianPackage \\
 		unzip \\
 		xz-utils \\
 EOD
-		if [ "$needCaHack" ]; then
+	if [ "$needCaHack" ]; then
 			cat >> "$version/Dockerfile" <<EOD
 		ca-certificates-java="20140324" \\
 	&& /var/lib/dpkg/info/ca-certificates-java.postinst configure \\
 EOD
-		fi
 	fi
 	cat >> "$version/Dockerfile" <<EOD
 	&& apt-get clean \\
