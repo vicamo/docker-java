@@ -22,34 +22,44 @@ env:
   - VERSION=7-jre/wheezy
   - VERSION=8-jdk/artful
   - VERSION=8-jdk/buster
+  - VERSION=8-jdk/buster VARIANT=slim
   - VERSION=8-jdk/jessie
   - VERSION=8-jdk/jessie VARIANT=alpine
+  - VERSION=8-jdk/jessie VARIANT=slim
   - VERSION=8-jdk/sid
+  - VERSION=8-jdk/sid VARIANT=slim
   - VERSION=8-jdk/stretch
   - VERSION=8-jdk/stretch VARIANT=slim
   - VERSION=8-jdk/xenial
   - VERSION=8-jdk/zesty
   - VERSION=8-jre/artful
   - VERSION=8-jre/buster
+  - VERSION=8-jre/buster VARIANT=slim
   - VERSION=8-jre/jessie
   - VERSION=8-jre/jessie VARIANT=alpine
+  - VERSION=8-jre/jessie VARIANT=slim
   - VERSION=8-jre/sid
+  - VERSION=8-jre/sid VARIANT=slim
   - VERSION=8-jre/stretch
   - VERSION=8-jre/stretch VARIANT=slim
   - VERSION=8-jre/xenial
   - VERSION=8-jre/zesty
   - VERSION=9-jdk/artful
   - VERSION=9-jdk/buster
+  - VERSION=9-jdk/buster VARIANT=slim
   - VERSION=9-jdk/sid
   - VERSION=9-jdk/sid VARIANT=slim
   - VERSION=9-jdk/stretch
+  - VERSION=9-jdk/stretch VARIANT=slim
   - VERSION=9-jdk/xenial
   - VERSION=9-jdk/zesty
   - VERSION=9-jre/artful
   - VERSION=9-jre/buster
+  - VERSION=9-jre/buster VARIANT=slim
   - VERSION=9-jre/sid
   - VERSION=9-jre/sid VARIANT=slim
   - VERSION=9-jre/stretch
+  - VERSION=9-jre/stretch VARIANT=slim
   - VERSION=9-jre/xenial
   - VERSION=9-jre/zesty
 
