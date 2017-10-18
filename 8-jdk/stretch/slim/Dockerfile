@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM buildpack-deps:trusty-scm
+FROM debian:stretch-slim
 
 # A few reasons for installing distribution-provided OpenJDK:
 #
@@ -41,7 +41,7 @@ ENV JAVA_HOME /docker-java-home
 
 # see https://bugs.debian.org/775775
 # and https://github.com/docker-library/java/issues/19#issuecomment-70546872
-ENV CA_CERTIFICATES_JAVA_VERSION 20130815ubuntu1
+ENV CA_CERTIFICATES_JAVA_VERSION 20170531+nmu1
 
 RUN set -ex; \
 	\

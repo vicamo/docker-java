@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM buildpack-deps:trusty-scm
+FROM debian:stretch-slim
 
 # A few reasons for installing distribution-provided OpenJDK:
 #
@@ -37,11 +37,11 @@ RUN { \
 
 # do some fancy footwork to create a JAVA_HOME that's cross-architecture-safe
 RUN ln -svT "/usr/lib/jvm/java-8-openjdk-$(dpkg --print-architecture)" /docker-java-home
-ENV JAVA_HOME /docker-java-home
+ENV JAVA_HOME /docker-java-home/jre
 
 # see https://bugs.debian.org/775775
 # and https://github.com/docker-library/java/issues/19#issuecomment-70546872
-ENV CA_CERTIFICATES_JAVA_VERSION 20130815ubuntu1
+ENV CA_CERTIFICATES_JAVA_VERSION 20170531+nmu1
 
 RUN set -ex; \
 	\
@@ -52,7 +52,7 @@ RUN set -ex; \
 	\
 	apt-get update; \
 	apt-get install --no-install-recommends -y \
-		openjdk-8-jdk \
+		openjdk-8-jre-headless \
 		ca-certificates-java="$CA_CERTIFICATES_JAVA_VERSION" \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
