@@ -11,6 +11,14 @@ FROM buildpack-deps:jessie-scm
 #  2. Compiling OpenJDK also requires the JDK to be installed, and it gets
 #       really hairy.
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+		bzip2 \
+		unzip \
+		xz-utils \
+	&& rm -rf /var/lib/apt/lists/*
+
+RUN echo 'deb http://deb.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/jessie-backports.list
+
 # Default to UTF-8 file.encoding
 ENV LANG C.UTF-8
 
@@ -24,7 +32,9 @@ RUN { \
 	} > /usr/local/bin/docker-java-home \
 	&& chmod +x /usr/local/bin/docker-java-home
 
-ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+# do some fancy footwork to create a JAVA_HOME that's cross-architecture-safe
+RUN ln -svT "/usr/lib/jvm/java-8-openjdk-$(dpkg --print-architecture)" /docker-java-home
+ENV JAVA_HOME /docker-java-home
 
 # see https://bugs.debian.org/775775
 # and https://github.com/docker-library/java/issues/19#issuecomment-70546872
@@ -32,25 +42,23 @@ ENV CA_CERTIFICATES_JAVA_VERSION 20161107~bpo8+1
 
 RUN set -ex; \
 	\
-	(echo 'deb http://deb.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/jessie-backports.list) \
-	&& apt-get update \
-	&& apt-get install --no-install-recommends -y \
-		bzip2 \
+	apt-get update; \
+	apt-get install --no-install-recommends -y \
 		openjdk-8-jdk \
-		unzip \
-		xz-utils \
 		ca-certificates-java="$CA_CERTIFICATES_JAVA_VERSION" \
-	&& /var/lib/dpkg/info/ca-certificates-java.postinst configure \
-	&& apt-get clean \
 	; \
-	rm -rf /var/lib/apt/lists/*_dists_*; \
+	rm -rf /var/lib/apt/lists/*; \
+	\
 # verify that "docker-java-home" returns what we expect
-	[ "$JAVA_HOME" = "$(docker-java-home)" ]; \
+	[ "$(readlink -f "$JAVA_HOME")" = "$(docker-java-home)" ]; \
 	\
 # update-alternatives so that future installs of other OpenJDK versions don't change /usr/bin/java
-	update-alternatives --get-selections | awk -v home="$JAVA_HOME" 'index($3, home) == 1 { $2 = "manual"; print | "update-alternatives --set-selections" }'; \
+	update-alternatives --get-selections | awk -v home="$(readlink -f "$JAVA_HOME")" 'index($3, home) == 1 { $2 = "manual"; print | "update-alternatives --set-selections" }'; \
 # ... and verify that it actually worked for one of the alternatives we care about
 	update-alternatives --query java | grep -q 'Status: manual'
+
+# see CA_CERTIFICATES_JAVA_VERSION notes above
+RUN /var/lib/dpkg/info/ca-certificates-java.postinst configure
 
 # If you're reading this and have any feedback on how this image could be
 #   improved, please open an issue or a pull request so we can discuss it!

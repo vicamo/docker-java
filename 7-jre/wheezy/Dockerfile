@@ -11,6 +11,12 @@ FROM buildpack-deps:wheezy-curl
 #  2. Compiling OpenJDK also requires the JDK to be installed, and it gets
 #       really hairy.
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+		bzip2 \
+		unzip \
+		xz-utils \
+	&& rm -rf /var/lib/apt/lists/*
+
 # Default to UTF-8 file.encoding
 ENV LANG C.UTF-8
 
@@ -24,24 +30,23 @@ RUN { \
 	} > /usr/local/bin/docker-java-home \
 	&& chmod +x /usr/local/bin/docker-java-home
 
-ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64/jre
+# do some fancy footwork to create a JAVA_HOME that's cross-architecture-safe
+RUN ln -svT "/usr/lib/jvm/java-7-openjdk-$(dpkg --print-architecture)" /docker-java-home
+ENV JAVA_HOME /docker-java-home/jre
 
 RUN set -ex; \
 	\
-	&& apt-get update \
-	&& apt-get install --no-install-recommends -y \
-		bzip2 \
+	apt-get update; \
+	apt-get install --no-install-recommends -y \
 		openjdk-7-jre-headless \
-		unzip \
-		xz-utils \
-	&& apt-get clean \
 	; \
-	rm -rf /var/lib/apt/lists/*_dists_*; \
+	rm -rf /var/lib/apt/lists/*; \
+	\
 # verify that "docker-java-home" returns what we expect
-	[ "$JAVA_HOME" = "$(docker-java-home)" ]; \
+	[ "$(readlink -f "$JAVA_HOME")" = "$(docker-java-home)" ]; \
 	\
 # update-alternatives so that future installs of other OpenJDK versions don't change /usr/bin/java
-	update-alternatives --get-selections | awk -v home="$JAVA_HOME" 'index($3, home) == 1 { $2 = "manual"; print | "update-alternatives --set-selections" }'; \
+	update-alternatives --get-selections | awk -v home="$(readlink -f "$JAVA_HOME")" 'index($3, home) == 1 { $2 = "manual"; print | "update-alternatives --set-selections" }'; \
 # ... and verify that it actually worked for one of the alternatives we care about
 	update-alternatives --query java | grep -q 'Status: manual'
 

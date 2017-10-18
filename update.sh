@@ -21,21 +21,10 @@ declare -A doru=(
 	[zesty]='ubuntu'
 )
 
-declare -A oracleJavaSuite=(
-	[artful]='artful'
-	[buster]='vivid'
-	[jessie]='vivid'
-	[sid]='vivid'
-	[stretch]='vivid'
-	[trusty]='trusty'
-	[wheezy]='vivid'
-	[xenial]='xenial'
-	[zesty]='zesty'
-)
 declare -A alpineVersions=(
-	[7]='3.4'
-	[8]='3.5'
-	[9]='3.5'
+	[7]='3.6'
+	[8]='3.6'
+	#[9]='TBD' # there is no openjdk9 in Alpine yet (https://pkgs.alpinelinux.org/packages?name=openjdk9*&arch=x86_64)
 )
 
 declare -A addSuites=(
@@ -43,7 +32,7 @@ declare -A addSuites=(
 	[9-stretch]='stretch-backports'
 )
 
-declare -A variants=(
+declare -A buildpackDepsVariants=(
 	[jre]='curl'
 	[jdk]='scm'
 )
@@ -161,13 +150,7 @@ for version in "${versions[@]}"; do
 
 	suite="${version##*/}"
 	addSuite="${addSuites[$javaVersion-$suite]}"
-	variant="${variants[$javaType]}"
-
-	javaHome="/usr/lib/jvm/java-$javaVersion-openjdk-$dpkgArch"
-	if [ "$javaType" = 'jre' -a "$javaVersion" -lt 9 ]; then
-		# woot, this hackery stopped in OpenJDK 9+!
-		javaHome+='/jre'
-	fi
+	buildpackDepsVariant="${buildpackDepsVariants[$javaType]}"
 
 	needCaHack=
 	if [ "$javaVersion" -ge 8 -a "$suite" != 'sid' ]; then
@@ -190,88 +173,102 @@ for version in "${versions[@]}"; do
 		# PLEASE DO NOT EDIT IT DIRECTLY.
 		#
 
-		FROM buildpack-deps:$suite-$variant
+		FROM buildpack-deps:$suite-$buildpackDepsVariant
 
 		# A few problems with compiling Java from source:
 		#  1. Oracle.  Licensing prevents us from redistributing the official JDK.
 		#  2. Compiling OpenJDK also requires the JDK to be installed, and it gets
 		#       really hairy.
-
 	EOD
 
+	cat >> "$version/Dockerfile" <<'EOD'
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+		bzip2 \
+		unzip \
+		xz-utils \
+	&& rm -rf /var/lib/apt/lists/*
+EOD
+
+	if [ "$addSuite" ]; then
+		cat >> "$version/Dockerfile" <<-EOD
+
+			RUN echo 'deb http://deb.debian.org/debian $addSuite main' > /etc/apt/sources.list.d/$addSuite.list
+		EOD
+	fi
+
 	cat >> "$version/Dockerfile" <<-EOD
+
 		# Default to UTF-8 file.encoding
 		ENV LANG C.UTF-8
 	EOD
 
 	java-home-script >> "$version/Dockerfile"
 
+	jreSuffix=
+	if [ "$javaType" = 'jre' -a "$javaVersion" -lt 9 ]; then
+		# woot, this hackery stopped in OpenJDK 9+!
+		jreSuffix='/jre'
+	fi
 	cat >> "$version/Dockerfile" <<-EOD
 
-		ENV JAVA_HOME $javaHome
-
+		# do some fancy footwork to create a JAVA_HOME that's cross-architecture-safe
+		RUN ln -svT "/usr/lib/jvm/java-$javaVersion-openjdk-\$(dpkg --print-architecture)" /docker-java-home
+		ENV JAVA_HOME /docker-java-home$jreSuffix
 	EOD
 
 	if [ "$needCaHack" ]; then
 		debian-latest-version 'ca-certificates-java' "${doru[$suite]}" "$debSuite" > /dev/null # prime the cache
 		caCertHackVersion="$(debian-latest-version 'ca-certificates-java' "${doru[$suite]}" "$debSuite")"
 		cat >> "$version/Dockerfile" <<-EOD
+
 			# see https://bugs.debian.org/775775
 			# and https://github.com/docker-library/java/issues/19#issuecomment-70546872
 			ENV CA_CERTIFICATES_JAVA_VERSION $caCertHackVersion
-
 		EOD
 	fi
 
 	cat >> "$version/Dockerfile" <<EOD
+
 RUN set -ex; \\
 	\\
-EOD
-
-	if [ "$addSuite" ]; then
-		cat >> "$version/Dockerfile" <<EOD
-	(echo 'deb http://deb.debian.org/debian $addSuite main' > /etc/apt/sources.list.d/$addSuite.list) \\
-EOD
-	fi
-
-	cat >> "$version/Dockerfile" <<EOD
-	&& apt-get update \\
-	&& apt-get install --no-install-recommends -y \\
-EOD
-
-	cat >> "$version/Dockerfile" <<EOD
-		bzip2 \\
+	apt-get update; \\
+	apt-get install --no-install-recommends -y \\
 		$debianPackage \\
-		unzip \\
-		xz-utils \\
 EOD
 	if [ "$needCaHack" ]; then
-			cat >> "$version/Dockerfile" <<EOD
+		cat >> "$version/Dockerfile" <<EOD
 		ca-certificates-java="\$CA_CERTIFICATES_JAVA_VERSION" \\
-	&& /var/lib/dpkg/info/ca-certificates-java.postinst configure \\
 EOD
 	fi
 	cat >> "$version/Dockerfile" <<EOD
-	&& apt-get clean \\
 	; \\
-	rm -rf /var/lib/apt/lists/*_dists_*; \\
+	rm -rf /var/lib/apt/lists/*; \\
+	\\
 # verify that "docker-java-home" returns what we expect
-	[ "\$JAVA_HOME" = "\$(docker-java-home)" ]; \\
+	[ "\$(readlink -f "\$JAVA_HOME")" = "\$(docker-java-home)" ]; \\
 	\\
 # update-alternatives so that future installs of other OpenJDK versions don't change /usr/bin/java
-	update-alternatives --get-selections | awk -v home="\$JAVA_HOME" 'index(\$3, home) == 1 { \$2 = "manual"; print | "update-alternatives --set-selections" }'; \\
+	update-alternatives --get-selections | awk -v home="\$(readlink -f "\$JAVA_HOME")" 'index(\$3, home) == 1 { \$2 = "manual"; print | "update-alternatives --set-selections" }'; \\
 # ... and verify that it actually worked for one of the alternatives we care about
 	update-alternatives --query java | grep -q 'Status: manual'
-
 EOD
 
+	if [ "$needCaHack" ]; then
+		cat >> "$version/Dockerfile" <<-EOD
+
+			# see CA_CERTIFICATES_JAVA_VERSION notes above
+			RUN /var/lib/dpkg/info/ca-certificates-java.postinst configure
+		EOD
+	fi
+
 	cat >> "$version/Dockerfile" <<-EOD
+
 		# If you're reading this and have any feedback on how this image could be
 		#   improved, please open an issue or a pull request so we can discuss it!
 	EOD
 
-	variant='alpine'
-	if [ -d "$version/$variant" ]; then
+	if [ -d "$version/alpine" ]; then
 		alpineVersion="${alpineVersions[$javaVersion]}"
 		alpinePackage="openjdk$javaVersion"
 		alpineJavaHome="/usr/lib/jvm/java-1.${javaVersion}-openjdk"
@@ -297,7 +294,7 @@ EOD
 
 		echo "$version: $alpineFullVersion (alpine $alpinePackageVersion)"
 
-		cat > "$version/$variant/Dockerfile" <<-EOD
+		cat > "$version/alpine/Dockerfile" <<-EOD
 			#
 			# NOTE: THIS DOCKERFILE IS GENERATED VIA "update.sh"
 			#
@@ -315,30 +312,33 @@ EOD
 			ENV LANG C.UTF-8
 		EOD
 
-		cat >> "$version/$variant/Dockerfile" <<-EOD
+		java-home-script >> "$version/alpine/Dockerfile"
+
+		cat >> "$version/alpine/Dockerfile" <<-EOD
 			ENV JAVA_HOME $alpineJavaHome
 			ENV PATH \$PATH:$alpinePathAdd
 		EOD
-		cat >> "$version/$variant/Dockerfile" <<-EOD
+		cat >> "$version/alpine/Dockerfile" <<-EOD
 
 			ENV JAVA_VERSION $alpineFullVersion
 			ENV JAVA_ALPINE_VERSION $alpinePackageVersion
 		EOD
-		cat >> "$version/$variant/Dockerfile" <<EOD
+		cat >> "$version/alpine/Dockerfile" <<EOD
 
 RUN set -x \\
 	&& apk add --no-cache \\
-		${alpinePackage}="\$JAVA_ALPINE_VERSION"
+		${alpinePackage}="\$JAVA_ALPINE_VERSION" \\
+	&& [ "\$JAVA_HOME" = "\$(docker-java-home)" ]
 EOD
 
-		travisEnv='\n  - VERSION='"$version"' VARIANT='"$variant$travisEnv"
+		travisEnv='\n  - VERSION='"$version"' VARIANT=alpine'"$travisEnv"
 	fi
 
 	if [ -d "$version/windows" ]; then
 		ojdkbuildVersion="$(
 			git ls-remote --tags 'https://github.com/ojdkbuild/ojdkbuild' \
 				| cut -d/ -f3 \
-				| grep -E '^1[.]'"$javaVersion"'[.]' \
+				| grep -E '^(1[.])?'"$javaVersion"'[.-]' \
 				| sort -V \
 				| tail -1
 		)"
@@ -348,7 +348,7 @@ EOD
 		fi
 		ojdkbuildZip="$(
 			curl -fsSL "https://github.com/ojdkbuild/ojdkbuild/releases/tag/$ojdkbuildVersion" \
-				| grep --only-matching -E 'java-'"$(echo "$ojdkbuildVersion" | cut -d. -f1-3)"'-openjdk-'"$ojdkbuildVersion"'[.][b0-9]+[.]ojdkbuild[.]windows[.]x86_64[.]zip' \
+				| grep --only-matching -E 'java-[0-9.]+-openjdk-[b0-9.-]+[.]ojdkbuild(ea)?[.]windows[.]x86_64[.]zip' \
 				| sort -u
 		)"
 		if [ -z "$ojdkbuildZip" ]; then
@@ -360,7 +360,14 @@ EOD
 			echo >&2 "error: $ojdkbuildVersion seems to have $ojdkbuildZip, but no sha256 for it"
 			exit 1
 		fi
-		ojdkJavaVersion="$(echo "$ojdkbuildVersion" | cut -d. -f2,4 | cut -d- -f1 | tr . u)" # convert "1.8.0.111-3" into "8u111"
+
+		if [[ "$ojdkbuildVersion" == *-ea-* ]]; then
+			# convert "9-ea-b154-1" into "9-b154"
+			ojdkJavaVersion="$(echo "$ojdkbuildVersion" | sed -r 's/-ea-/-/' | cut -d- -f1,2)"
+		else
+			# convert "1.8.0.111-3" into "8u111"
+			ojdkJavaVersion="$(echo "$ojdkbuildVersion" | cut -d. -f2,4 | cut -d- -f1 | tr . u)"
+		fi
 
 		echo "$version: $ojdkJavaVersion (windows ojdkbuild $ojdkbuildVersion)"
 
