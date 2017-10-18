@@ -56,8 +56,6 @@ env:
 matrix:
   fast_finish: true
   allow_failures:
-  - env: VERSION=8-jdk/jessie
-  - env: VERSION=8-jre/jessie
   - env: VERSION=9-jdk/xenial
 
 branches:

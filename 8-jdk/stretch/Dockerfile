@@ -39,10 +39,6 @@ RUN { \
 RUN ln -svT "/usr/lib/jvm/java-8-openjdk-$(dpkg --print-architecture)" /docker-java-home
 ENV JAVA_HOME /docker-java-home
 
-# see https://bugs.debian.org/775775
-# and https://github.com/docker-library/java/issues/19#issuecomment-70546872
-ENV CA_CERTIFICATES_JAVA_VERSION 20170531+nmu1
-
 RUN set -ex; \
 	\
 # deal with slim variants not having man page directories (which causes "update-alternatives" to fail)
@@ -53,7 +49,6 @@ RUN set -ex; \
 	apt-get update; \
 	apt-get install --no-install-recommends -y \
 		openjdk-8-jdk \
-		ca-certificates-java="$CA_CERTIFICATES_JAVA_VERSION" \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
@@ -64,9 +59,6 @@ RUN set -ex; \
 	update-alternatives --get-selections | awk -v home="$(readlink -f "$JAVA_HOME")" 'index($3, home) == 1 { $2 = "manual"; print | "update-alternatives --set-selections" }'; \
 # ... and verify that it actually worked for one of the alternatives we care about
 	update-alternatives --query java | grep -q 'Status: manual'
-
-# see CA_CERTIFICATES_JAVA_VERSION notes above
-RUN /var/lib/dpkg/info/ca-certificates-java.postinst configure
 
 # If you're reading this and have any feedback on how this image could be
 # improved, please open an issue or a pull request so we can discuss it!

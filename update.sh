@@ -188,7 +188,7 @@ for version in "${versions[@]}"; do
 	buildpackDepsVariant="${buildpackDepsVariants[$javaType]}"
 
 	needCaHack=
-	if [ "$javaVersion" -ge 8 -a "$suite" != 'sid' ]; then
+	if [ "$javaVersion" -ge 8 -a "$suite" = 'jessie' ]; then
 		# "20140324" is broken (jessie), but "20160321" is fixed (sid)
 		needCaHack=1
 	fi
@@ -259,7 +259,9 @@ RUN set -ex; \\
 		$debianPackage \\
 EOD
 	if [ "$needCaHack" ]; then
+		# ca-certificates-java depends on jre, and apt may decide to install both. Explicitly exclude older one.
 		cat >> "$version/Dockerfile" <<EOD
+		openjdk-$((javaVersion-1))-jre-headless- \\
 		ca-certificates-java="\$CA_CERTIFICATES_JAVA_VERSION" \\
 EOD
 	fi
