@@ -15,11 +15,13 @@ FROM buildpack-deps:jessie-curl
 ENV LANG C.UTF-8
 
 RUN set -x \
-	&& (echo 'deb http://httpredir.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/jessie-backports.list) \
+	&& (echo 'deb http://deb.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/jessie-backports.list) \
 	&& apt-get update \
 	&& apt-get install --no-install-recommends -y \
+		bzip2 \
 		openjdk-8-jre-headless \
 		unzip \
+		xz-utils \
 		ca-certificates-java="20140324" \
 	&& /var/lib/dpkg/info/ca-certificates-java.postinst configure \
 	&& apt-get clean \

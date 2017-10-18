@@ -15,11 +15,13 @@ FROM buildpack-deps:stretch-scm
 ENV LANG C.UTF-8
 
 RUN set -x \
-	&& (echo 'deb http://httpredir.debian.org/debian stretch-backports main' > /etc/apt/sources.list.d/stretch-backports.list) \
+	&& (echo 'deb http://deb.debian.org/debian stretch-backports main' > /etc/apt/sources.list.d/stretch-backports.list) \
 	&& apt-get update \
 	&& apt-get install --no-install-recommends -y \
-		openjdk-9-jdk \
+		bzip2 \
+		openjdk-9-jdk-headless \
 		unzip \
+		xz-utils \
 		ca-certificates-java="20140324" \
 	&& /var/lib/dpkg/info/ca-certificates-java.postinst configure \
 	&& apt-get clean \

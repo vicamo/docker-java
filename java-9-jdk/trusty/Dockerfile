@@ -17,9 +17,11 @@ ENV LANG C.UTF-8
 RUN set -x \
 	&& apt-get update \
 	&& apt-get install --no-install-recommends -y \
+		bzip2 \
 		dirmngr \
 		gnupg \
 		unzip \
+		xz-utils \
 	&& (echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main" > /etc/apt/sources.list.d/webupd8team-ubuntu-java.list) \
 	&& apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C2518248EEA14886 \
 	&& (echo "debconf shared/accepted-oracle-license-v1-1 select true" | debconf-set-selections) \

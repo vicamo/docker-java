@@ -43,7 +43,7 @@ declare -A variants=(
 	[jdk]='scm'
 )
 
-alpineVersion='3.3'
+alpineVersion='3.5'
 alpineMirror="http://dl-cdn.alpinelinux.org/alpine/v${alpineVersion}/community/x86_64"
 curl -fsSL'#' "$alpineMirror/APKINDEX.tar.gz" | tar -zxv APKINDEX
 
@@ -71,7 +71,8 @@ for version in "${versions[@]}"; do
 		debianPackage=oracle-java$javaVersion-installer
 	else
 		debianPackage="$flavor-$javaVersion-$javaType"
-		if [ "$javaType" = 'jre' ]; then
+		if [ "$javaType" = 'jre' -o "$javaVersion" -ge 9 ]; then
+			# "openjdk-9" in Debian introduced an "openjdk-9-jdk-headless" package \o/
 			debianPackage+='-headless'
 		fi
 	fi
@@ -104,7 +105,7 @@ for version in "${versions[@]}"; do
 
 	if [ "$addSuite" ]; then
 		cat >> "$version/Dockerfile" <<EOD
-	&& (echo 'deb http://httpredir.debian.org/debian $addSuite main' > /etc/apt/sources.list.d/$addSuite.list) \\
+	&& (echo 'deb http://deb.debian.org/debian $addSuite main' > /etc/apt/sources.list.d/$addSuite.list) \\
 EOD
 	fi
 
@@ -115,9 +116,11 @@ EOD
 
 	if [ "$flavor" = 'java' ]; then
 		cat >> "$version/Dockerfile" <<EOD
+		bzip2 \\
 		dirmngr \\
 		gnupg \\
 		unzip \\
+		xz-utils \\
 	&& (echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu ${oracleJavaSuite[$suite]} main" > /etc/apt/sources.list.d/webupd8team-ubuntu-java.list) \\
 	&& apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C2518248EEA14886 \\
 	&& (echo "debconf shared/accepted-oracle-license-v1-1 select true" | debconf-set-selections) \\
@@ -129,8 +132,10 @@ EOD
 EOD
 	else
 		cat >> "$version/Dockerfile" <<EOD
+		bzip2 \\
 		$debianPackage \\
 		unzip \\
+		xz-utils \\
 EOD
 		if [ "$needCaHack" ]; then
 			cat >> "$version/Dockerfile" <<EOD
@@ -154,6 +159,7 @@ EOD
 	if [ -d "$version/$variant" ]; then
 		alpinePackage="openjdk$javaVersion"
 		alpineJavaHome="/usr/lib/jvm/java-1.${javaVersion}-openjdk"
+		alpinePathAdd="$alpineJavaHome/jre/bin:$alpineJavaHome/bin"
 		case "$javaType" in
 			jdk)
 				;;
@@ -186,9 +192,7 @@ EOD
 
 		cat >> "$version/$variant/Dockerfile" <<-EOD
 			ENV JAVA_HOME $alpineJavaHome
-		EOD
-		cat >> "$version/$variant/Dockerfile" <<-'EOD'
-			ENV PATH $PATH:$JAVA_HOME/bin
+			ENV PATH \$PATH:$alpinePathAdd
 		EOD
 		cat >> "$version/$variant/Dockerfile" <<-EOD
 

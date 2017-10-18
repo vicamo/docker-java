@@ -17,8 +17,10 @@ ENV LANG C.UTF-8
 RUN set -x \
 	&& apt-get update \
 	&& apt-get install --no-install-recommends -y \
+		bzip2 \
 		openjdk-6-jdk \
 		unzip \
+		xz-utils \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*_dists_*
 
