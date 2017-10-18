@@ -3,11 +3,10 @@ set -e
 
 declare -A aliases
 aliases=(
-	[openjdk-8-jdk]='jdk latest'
-	[openjdk-8-jre]='jre'
+	[8-jdk]='jdk latest'
+	[8-jre]='jre'
 )
 defaultType='jdk'
-defaultFlavor='openjdk'
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
@@ -17,29 +16,20 @@ url='git://github.com/docker-library/openjdk'
 
 echo '# maintainer: InfoSiftr <github@infosiftr.com> (@infosiftr)'
 
-for version in "${versions[@]}"; do
-	commit="$(cd "$version" && git log -1 --format='format:%H' -- Dockerfile $(awk 'toupper($1) == "COPY" { for (i = 2; i < NF; i++) { print $i } }' Dockerfile))"
-	
-	flavor="${version%%-*}" # "openjdk"
-	javaVersion="${version#*-}" # "6-jdk"
-	javaType="${javaVersion##*-}" # "jdk"
-	javaVersion="${javaVersion%-*}" # "6"
-	
-	fullVersion="$(grep -m1 'ENV JAVA_VERSION ' "$version/Dockerfile" | cut -d' ' -f3 | tr '~' '-')"
-	
-	bases=( $flavor-$fullVersion )
+aliases() {
+	local javaVersion="$1"; shift
+	local javaType="$1"; shift
+	local fullVersion="$1"; shift
+
+	bases=( $fullVersion )
 	if [ "${fullVersion%-*}" != "$fullVersion" ]; then
-		bases+=( $flavor-${fullVersion%-*} ) # like "8u40-b09
+		bases+=( ${fullVersion%-*} ) # like "8u40-b09
 	fi
 	if [ "$javaVersion" != "${fullVersion%-*}" ]; then
-		bases+=( $flavor-$javaVersion )
+		bases+=( $javaVersion )
 	fi
-	if [ "$flavor" = "$defaultFlavor" ]; then
-		for base in "${bases[@]}"; do
-			bases+=( "${base#$flavor-}" )
-		done
-	fi
-	
+	bases=( "${bases[@]/#/openjdk-}" "${bases[@]}" )
+
 	versionAliases=()
 	for base in "${bases[@]}"; do
 		versionAliases+=( "$base-$javaType" )
@@ -47,10 +37,38 @@ for version in "${versions[@]}"; do
 			versionAliases+=( "$base" )
 		fi
 	done
-	versionAliases+=( ${aliases[$version]} )
-	
+	echo "${versionAliases[@]}"
+}
+
+for version in "${versions[@]}"; do
+	commit="$(cd "$version" && git log -1 --format='format:%H' -- Dockerfile $(awk 'toupper($1) == "COPY" { for (i = 2; i < NF; i++) { print $i } }' Dockerfile))"
+
+	javaVersion="$version" # "6-jdk"
+	javaType="${javaVersion##*-}" # "jdk"
+	javaVersion="${javaVersion%-$javaType}" # "6"
+
+	fullVersion="$(grep -m1 'ENV JAVA_VERSION ' "$version/Dockerfile" | cut -d' ' -f3 | tr '~' '-')"
+
+	versionAliases=( $(aliases "$javaVersion" "$javaType" "$fullVersion" ) ${aliases[$version]} )
+
 	echo
 	for va in "${versionAliases[@]}"; do
 		echo "$va: ${url}@${commit} $version"
+	done
+
+	for variant in alpine; do
+		[ -f "$version/$variant/Dockerfile" ] || continue
+		commit="$(cd "$version/$variant" && git log -1 --format='format:%H' -- Dockerfile $(awk 'toupper($1) == "COPY" { for (i = 2; i < NF; i++) { print $i } }' Dockerfile))"
+
+		fullVersion="$(grep -m1 'ENV JAVA_VERSION ' "$version/Dockerfile" | cut -d' ' -f3 | tr '~' '-')"
+
+		versionAliases=( $(aliases "$javaVersion" "$javaType" "$fullVersion" ) ${aliases[$version]} )
+		versionAliases=( "${versionAliases[@]/%/-$variant}" )
+		versionAliases=( "${versionAliases[@]//latest-/}" )
+
+		echo
+		for va in "${versionAliases[@]}"; do
+			echo "$va: ${url}@${commit} $version/$variant"
+		done
 	done
 done

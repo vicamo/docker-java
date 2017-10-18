@@ -27,16 +27,19 @@ env:
   - VERSION=openjdk-6-jre/trusty
   - VERSION=openjdk-6-jre/wheezy
   - VERSION=openjdk-7-jdk/jessie
+  - VERSION=openjdk-7-jdk/jessie VARIANT=alpine
   - VERSION=openjdk-7-jdk/trusty
   - VERSION=openjdk-7-jdk/wheezy
   - VERSION=openjdk-7-jdk/xenial
   - VERSION=openjdk-7-jre/jessie
+  - VERSION=openjdk-7-jre/jessie VARIANT=alpine
   - VERSION=openjdk-7-jre/trusty
   - VERSION=openjdk-7-jre/wheezy
   - VERSION=openjdk-7-jre/xenial
   - VERSION=openjdk-8-jdk/artful
   - VERSION=openjdk-8-jdk/buster
   - VERSION=openjdk-8-jdk/jessie
+  - VERSION=openjdk-8-jdk/jessie VARIANT=alpine
   - VERSION=openjdk-8-jdk/sid
   - VERSION=openjdk-8-jdk/stretch
   - VERSION=openjdk-8-jdk/trusty
@@ -45,6 +48,7 @@ env:
   - VERSION=openjdk-8-jre/artful
   - VERSION=openjdk-8-jre/buster
   - VERSION=openjdk-8-jre/jessie
+  - VERSION=openjdk-8-jre/jessie VARIANT=alpine
   - VERSION=openjdk-8-jre/sid
   - VERSION=openjdk-8-jre/stretch
   - VERSION=openjdk-8-jre/trusty
@@ -79,11 +83,11 @@ install:
 
 before_script:
   - env | sort
-  - cd "$VERSION"
+  - cd "${VERSION}${VARIANT:+/$VARIANT}"
   - if [ -n "$(echo $VERSION | grep openjdk)" ]; then
-      image="${TRAVIS_REPO_SLUG%%/*}/java:${VERSION##*/}-${VERSION%%/*}";
+      image="${TRAVIS_REPO_SLUG%%/*}/java:${VERSION##*/}-${VERSION%%/*}${VARIANT:+-$VARIANT}";
     else
-      image="${TRAVIS_REPO_SLUG%%/*}/java:${VERSION##*/}-oracle-${VERSION%%/*}";
+      image="${TRAVIS_REPO_SLUG%%/*}/java:${VERSION##*/}-oracle-${VERSION%%/*}${VARIANT:+-$VARIANT}";
     fi
 
 script:
