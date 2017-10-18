@@ -48,7 +48,7 @@ RUN set -ex; \
 	\
 	apt-get update; \
 	apt-get install --no-install-recommends -y \
-		openjdk-9-jre-headless \
+		openjdk-9-jre \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
 	\

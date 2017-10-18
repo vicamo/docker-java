@@ -194,11 +194,6 @@ for version in "${versions[@]}"; do
 	fi
 
 	debianPackage="openjdk-$javaVersion-$javaType"
-	if [ "$javaType" = 'jre' -o "$javaVersion" -ge 9 ]; then
-		# "openjdk-9" in Debian introduced an "openjdk-9-jdk-headless" package \o/
-		debianPackage+='-headless'
-	fi
-	dist="${doru[$suite]}:${addSuite:-$suite}"
 	debSuite="${addSuite:-$suite}"
 
 	template-generated-warning "buildpack-deps:$suite-$buildpackDepsVariant" "$javaVersion" > "$version/Dockerfile"
@@ -289,6 +284,15 @@ EOD
 		EOD
 	fi
 
+	if [ "$javaType" = 'jdk' ] && [ "$javaVersion" -ge 9 ]; then
+		cat >> "$version/Dockerfile" <<-'EOD'
+
+			# https://docs.oracle.com/javase/9/tools/jshell.htm
+			# https://en.wikipedia.org/wiki/JShell
+			CMD ["jshell"]
+		EOD
+	fi
+
 	template-contribute-footer >> "$version/Dockerfile"
 
 	if [ -d "$version/alpine" ]; then
@@ -355,7 +359,7 @@ EOD
 		#   - swap "openjdk-N-(jre|jdk) for the -headless versions, where available (openjdk-8+ only for JDK variants)
 		sed -r \
 			-e 's!^FROM buildpack-deps:([^-]+)(-.+)?!FROM debian:\1-slim!' \
-			-e 's!(openjdk-(\d+-jre|([89]\d*|\d\d+)-jdk))=!\1-headless=!g' \
+			-e 's!(openjdk-([0-9]+-jre|([89]\d*|\d\d+)-jdk))=!\1-headless=!g' \
 			"$version/Dockerfile" > "$version/slim/Dockerfile"
 
 		travisEnv='\n  - VERSION='"$version"' VARIANT=slim'"$travisEnv"

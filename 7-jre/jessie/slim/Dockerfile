@@ -48,7 +48,7 @@ RUN set -ex; \
 	\
 	apt-get update; \
 	apt-get install --no-install-recommends -y \
-		openjdk-7-jre-headless \
+		openjdk-7-jre \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
