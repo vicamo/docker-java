@@ -137,6 +137,21 @@ debian-latest-version() {
 	echo "$latestVersion"
 }
 
+java-home-script() {
+	cat <<'EOD'
+
+# add a simple script that can auto-detect the appropriate JAVA_HOME value
+# based on whether the JDK or only the JRE is installed
+RUN { \
+		echo '#!/bin/sh'; \
+		echo 'set -e'; \
+		echo; \
+		echo 'dirname "$(dirname "$(readlink -f "$(which javac || which java)")")"'; \
+	} > /usr/local/bin/docker-java-home \
+	&& chmod +x /usr/local/bin/docker-java-home
+EOD
+}
+
 travisEnv=
 appveyorEnv=
 for version in "${versions[@]}"; do
@@ -187,6 +202,13 @@ for version in "${versions[@]}"; do
 	cat >> "$version/Dockerfile" <<-EOD
 		# Default to UTF-8 file.encoding
 		ENV LANG C.UTF-8
+	EOD
+
+	java-home-script >> "$version/Dockerfile"
+
+	cat >> "$version/Dockerfile" <<-EOD
+
+		ENV JAVA_HOME $javaHome
 
 	EOD
 
@@ -201,13 +223,14 @@ for version in "${versions[@]}"; do
 		EOD
 	fi
 
-	cat >> "$version/Dockerfile" <<-EOD
-		RUN set -x \\
-	EOD
+	cat >> "$version/Dockerfile" <<EOD
+RUN set -ex; \\
+	\\
+EOD
 
 	if [ "$addSuite" ]; then
 		cat >> "$version/Dockerfile" <<EOD
-	&& (echo 'deb http://deb.debian.org/debian $addSuite main' > /etc/apt/sources.list.d/$addSuite.list) \\
+	(echo 'deb http://deb.debian.org/debian $addSuite main' > /etc/apt/sources.list.d/$addSuite.list) \\
 EOD
 	fi
 
@@ -230,7 +253,15 @@ EOD
 	fi
 	cat >> "$version/Dockerfile" <<EOD
 	&& apt-get clean \\
-	&& rm -rf /var/lib/apt/lists/*_dists_*
+	; \\
+	rm -rf /var/lib/apt/lists/*_dists_*; \\
+# verify that "docker-java-home" returns what we expect
+	[ "\$JAVA_HOME" = "\$(docker-java-home)" ]; \\
+	\\
+# update-alternatives so that future installs of other OpenJDK versions don't change /usr/bin/java
+	update-alternatives --get-selections | awk -v home="\$JAVA_HOME" 'index(\$3, home) == 1 { \$2 = "manual"; print | "update-alternatives --set-selections" }'; \\
+# ... and verify that it actually worked for one of the alternatives we care about
+	update-alternatives --query java | grep -q 'Status: manual'
 
 EOD
 
