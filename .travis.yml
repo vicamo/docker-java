@@ -24,11 +24,11 @@ env:
   - VERSION=8-jdk/buster
   - VERSION=8-jdk/buster VARIANT=slim
   - VERSION=8-jdk/jessie
-  - VERSION=8-jdk/jessie VARIANT=alpine
   - VERSION=8-jdk/jessie VARIANT=slim
   - VERSION=8-jdk/sid
   - VERSION=8-jdk/sid VARIANT=slim
   - VERSION=8-jdk/stretch
+  - VERSION=8-jdk/stretch VARIANT=alpine
   - VERSION=8-jdk/stretch VARIANT=slim
   - VERSION=8-jdk/xenial
   - VERSION=8-jdk/zesty
@@ -36,11 +36,11 @@ env:
   - VERSION=8-jre/buster
   - VERSION=8-jre/buster VARIANT=slim
   - VERSION=8-jre/jessie
-  - VERSION=8-jre/jessie VARIANT=alpine
   - VERSION=8-jre/jessie VARIANT=slim
   - VERSION=8-jre/sid
   - VERSION=8-jre/sid VARIANT=slim
   - VERSION=8-jre/stretch
+  - VERSION=8-jre/stretch VARIANT=alpine
   - VERSION=8-jre/stretch VARIANT=slim
   - VERSION=8-jre/xenial
   - VERSION=8-jre/zesty
