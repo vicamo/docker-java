@@ -74,11 +74,13 @@ aliases() {
 	local fullVersion="$1"; shift
 	local variant="${1:-}" # optional
 
-	local bases=( $fullVersion )
-	if [ "${fullVersion%-*}" != "$fullVersion" ]; then
-		bases+=( ${fullVersion%-*} ) # like "8u40-b09
-	fi
-	if [ "$javaVersion" != "${fullVersion%-*}" ]; then
+	local bases=()
+	while [ "${fullVersion%[.-]*}" != "$fullVersion" ]; do
+		bases+=( $fullVersion )
+		fullVersion="${fullVersion%[.-]*}"
+	done
+	bases+=( $fullVersion )
+	if [ "$javaVersion" != "$fullVersion" ]; then
 		bases+=( $javaVersion )
 	fi
 
@@ -110,49 +112,46 @@ aliases() {
 }
 
 for version in "${versions[@]}"; do
-	commit="$(dirCommit "$version")"
-
 	javaVersion="$version" # "6-jdk"
 	javaType="${javaVersion##*-}" # "jdk"
 	javaVersion="${javaVersion%-$javaType}" # "6"
 
-	fullVersion="$(git show "$commit":"$version/Dockerfile" | awk '$1 == "ENV" && $2 == "JAVA_VERSION" { gsub(/~/, "-", $3); print $3; exit }')"
-
-	parent="$(awk 'toupper($1) == "FROM" { print $2 }' "$version/Dockerfile")"
-	arches="${parentRepoToArches[$parent]}"
-
-	echo
-	cat <<-EOE
-		Tags: $(join ', ' $(aliases "$javaVersion" "$javaType" "$fullVersion"))
-		Architectures: $(join ', ' $arches)
-		GitCommit: $commit
-		Directory: $version
-	EOE
-
 	for v in \
-		slim alpine \
-		windows/windowsservercore windows/nanoserver \
+		'' slim alpine \
+		windows/windowsservercore-{ltsc2016,1709} \
+		windows/nanoserver-{sac2016,1709} \
 	; do
-		dir="$version/$v"
-		variant="$(basename "$v")"
+		dir="$version${v:+/$v}"
+		[ -n "$v" ] && variant="$(basename "$v")" || variant=
 
 		[ -f "$dir/Dockerfile" ] || continue
 
 		commit="$(dirCommit "$dir")"
 
-		fullVersion="$(git show "$commit":"$dir/Dockerfile" | awk '$1 == "ENV" && $2 == "JAVA_VERSION" { gsub(/~/, "-", $3); print $3; exit }')"
+		fullVersion="$(git show "$commit":"$dir/Dockerfile" | awk '$1 == "ENV" && $2 == "JAVA_VERSION" { gsub(/[~+]/, "-", $3); print $3; exit }')"
 
 		case "$v" in
 			windows/*) variantArches='windows-amd64' ;;
 			*)
-				variantParent="$(awk 'toupper($1) == "FROM" { print $2 }' "$version/$v/Dockerfile")"
+				variantParent="$(awk 'toupper($1) == "FROM" { print $2 }' "$dir/Dockerfile")"
 				variantArches="${parentRepoToArches[$variantParent]}"
 				;;
 		esac
 
+		sharedTags=()
+		for windowsShared in windowsservercore nanoserver; do
+			if [[ "$variant" == "$windowsShared"* ]]; then
+				sharedTags+=( "$windowsShared" )
+				break
+			fi
+		done
+
 		echo
+		echo "Tags: $(join ', ' $(aliases "$javaVersion" "$javaType" "$fullVersion" "$variant"))"
+		if [ "${#sharedTags[@]}" -gt 0 ]; then
+			echo "SharedTags: $(join ', ' "${sharedTags[@]}")"
+		fi
 		cat <<-EOE
-			Tags: $(join ', ' $(aliases "$javaVersion" "$javaType" "$fullVersion" "$variant"))
 			Architectures: $(join ', ' $variantArches)
 			GitCommit: $commit
 			Directory: $dir

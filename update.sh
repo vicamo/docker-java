@@ -23,8 +23,8 @@ declare -A doru=(
 )
 
 declare -A alpineVersions=(
-	[7]='3.6'
-	[8]='3.6'
+	[7]='3.7'
+	[8]='3.7'
 	#[9]='TBD' # there is no openjdk9 in Alpine yet (https://pkgs.alpinelinux.org/packages?name=openjdk9*&arch=x86_64)
 )
 
@@ -398,9 +398,15 @@ EOD
 		if [[ "$ojdkbuildVersion" == *-ea-* ]]; then
 			# convert "9-ea-b154-1" into "9-b154"
 			ojdkJavaVersion="$(echo "$ojdkbuildVersion" | sed -r 's/-ea-/-/' | cut -d- -f1,2)"
-		else
+		elif [[ "$ojdkbuildVersion" == 1.* ]]; then
 			# convert "1.8.0.111-3" into "8u111"
 			ojdkJavaVersion="$(echo "$ojdkbuildVersion" | cut -d. -f2,4 | cut -d- -f1 | tr . u)"
+		elif [[ "$ojdkbuildVersion" == 9.* ]]; then
+			# convert "9.0.1-1.b01" into "9.0.1"
+			ojdkJavaVersion="${ojdkbuildVersion%%-*}"
+		else
+			echo >&2 "error: unable to parse ojdkbuild version $ojdkbuildVersion"
+			exit 1
 		fi
 
 		echo "$version: $ojdkJavaVersion (windows ojdkbuild $ojdkbuildVersion)"
@@ -412,8 +418,20 @@ EOD
 			-e 's/^(ENV JAVA_OJDKBUILD_SHA256) .*/\1 '"$ojdkbuildSha256"'/' \
 			"$version"/windows/*/Dockerfile
 
-		for df in "$version"/windows/*/Dockerfile; do
-			appveyorEnv='\n    - version: '"$version"'\n      variant: '"$(basename "$(dirname "$df")")$appveyorEnv"
+		for winVariant in \
+			nanoserver-{1709,sac2016} \
+			windowsservercore-{1709,ltsc2016} \
+		; do
+			[ -f "$version/windows/$winVariant/Dockerfile" ] || continue
+
+			sed -ri \
+				-e 's!^FROM .*!FROM microsoft/'"${winVariant%%-*}"':'"${winVariant#*-}"'!' \
+				"$version/windows/$winVariant/Dockerfile"
+
+			case "$winVariant" in
+				*-1709) ;; # no AppVeyor support for 1709 yet: https://github.com/appveyor/ci/issues/1885
+				*) appveyorEnv='\n    - version: '"$version"'\n      variant: '"$winVariant$appveyorEnv" ;;
+			esac
 		done
 	fi
 
