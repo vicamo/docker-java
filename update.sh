@@ -11,6 +11,7 @@ versions=( "${versions[@]%/}" )
 
 declare -A doru=(
 	[artful]='ubuntu'
+	[bionic]='ubuntu'
 	[buster]='debian'
 	[jessie]='debian'
 	[sid]='debian'
