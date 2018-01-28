@@ -19,7 +19,6 @@ declare -A doru=(
 	[trusty]='ubuntu'
 	[wheezy]='debian'
 	[xenial]='ubuntu'
-	[zesty]='ubuntu'
 )
 
 declare -A alpineVersions=(

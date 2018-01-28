@@ -32,7 +32,6 @@ env:
   - VERSION=8-jdk/stretch VARIANT=alpine
   - VERSION=8-jdk/stretch VARIANT=slim
   - VERSION=8-jdk/xenial
-  - VERSION=8-jdk/zesty
   - VERSION=8-jre/artful
   - VERSION=8-jre/bionic
   - VERSION=8-jre/buster
@@ -45,7 +44,6 @@ env:
   - VERSION=8-jre/stretch VARIANT=alpine
   - VERSION=8-jre/stretch VARIANT=slim
   - VERSION=8-jre/xenial
-  - VERSION=8-jre/zesty
   - VERSION=9-jdk/artful
   - VERSION=9-jdk/bionic
   - VERSION=9-jdk/buster
@@ -55,7 +53,6 @@ env:
   - VERSION=9-jdk/stretch
   - VERSION=9-jdk/stretch VARIANT=slim
   - VERSION=9-jdk/xenial
-  - VERSION=9-jdk/zesty
   - VERSION=9-jre/artful
   - VERSION=9-jre/bionic
   - VERSION=9-jre/buster
@@ -65,7 +62,6 @@ env:
   - VERSION=9-jre/stretch
   - VERSION=9-jre/stretch VARIANT=slim
   - VERSION=9-jre/xenial
-  - VERSION=9-jre/zesty
 
 matrix:
   fast_finish: true
