@@ -22,53 +22,10 @@ env:
   - VERSION=java-9-jdk/wheezy
   - VERSION=java-9-jdk/xenial
   - VERSION=java-9-jdk/zesty
-  - VERSION=openjdk-6-jdk/trusty
-  - VERSION=openjdk-6-jdk/wheezy
-  - VERSION=openjdk-6-jre/trusty
-  - VERSION=openjdk-6-jre/wheezy
-  - VERSION=openjdk-7-jdk/jessie
-  - VERSION=openjdk-7-jdk/trusty
-  - VERSION=openjdk-7-jdk/wheezy
-  - VERSION=openjdk-7-jdk/xenial
-  - VERSION=openjdk-7-jre/jessie
-  - VERSION=openjdk-7-jre/trusty
-  - VERSION=openjdk-7-jre/wheezy
-  - VERSION=openjdk-7-jre/xenial
-  - VERSION=openjdk-8-jdk/artful
-  - VERSION=openjdk-8-jdk/buster
-  - VERSION=openjdk-8-jdk/jessie
-  - VERSION=openjdk-8-jdk/sid
-  - VERSION=openjdk-8-jdk/stretch
-  - VERSION=openjdk-8-jdk/trusty
-  - VERSION=openjdk-8-jdk/xenial
-  - VERSION=openjdk-8-jdk/zesty
-  - VERSION=openjdk-8-jre/artful
-  - VERSION=openjdk-8-jre/buster
-  - VERSION=openjdk-8-jre/jessie
-  - VERSION=openjdk-8-jre/sid
-  - VERSION=openjdk-8-jre/stretch
-  - VERSION=openjdk-8-jre/trusty
-  - VERSION=openjdk-8-jre/xenial
-  - VERSION=openjdk-8-jre/zesty
-  - VERSION=openjdk-9-jdk/artful
-  - VERSION=openjdk-9-jdk/buster
-  - VERSION=openjdk-9-jdk/sid
-  - VERSION=openjdk-9-jdk/stretch
-  - VERSION=openjdk-9-jdk/xenial
-  - VERSION=openjdk-9-jdk/zesty
-  - VERSION=openjdk-9-jre/artful
-  - VERSION=openjdk-9-jre/buster
-  - VERSION=openjdk-9-jre/sid
-  - VERSION=openjdk-9-jre/stretch
-  - VERSION=openjdk-9-jre/xenial
-  - VERSION=openjdk-9-jre/zesty
 
 matrix:
   fast_finish: true
   allow_failures:
-  - env: VERSION=openjdk-8-jdk/jessie
-  - env: VERSION=openjdk-8-jre/jessie
-  - env: VERSION=openjdk-9-jdk/xenial
 
 branches:
   only:
