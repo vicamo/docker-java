@@ -12,7 +12,6 @@ env:
   - VERSION=java-8-jdk/trusty
   - VERSION=java-8-jdk/wheezy
   - VERSION=java-8-jdk/xenial
-  - VERSION=java-8-jdk/zesty
   - VERSION=java-9-jdk/artful
   - VERSION=java-9-jdk/buster
   - VERSION=java-9-jdk/jessie
@@ -21,7 +20,6 @@ env:
   - VERSION=java-9-jdk/trusty
   - VERSION=java-9-jdk/wheezy
   - VERSION=java-9-jdk/xenial
-  - VERSION=java-9-jdk/zesty
 
 matrix:
   fast_finish: true

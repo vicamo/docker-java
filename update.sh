@@ -18,7 +18,6 @@ declare -A doru=(
 	[trusty]='ubuntu'
 	[wheezy]='debian'
 	[xenial]='ubuntu'
-	[zesty]='ubuntu'
 )
 
 declare -A oracleJavaSuite=(
@@ -30,7 +29,6 @@ declare -A oracleJavaSuite=(
 	[trusty]='trusty'
 	[wheezy]='xenial'
 	[xenial]='xenial'
-	[zesty]='zesty'
 )
 
 declare -A addSuites=(
