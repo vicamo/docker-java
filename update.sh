@@ -11,6 +11,7 @@ versions=( "${versions[@]%/}" )
 
 declare -A doru=(
 	[artful]='ubuntu'
+	[bionic]='ubuntu'
 	[buster]='debian'
 	[jessie]='debian'
 	[sid]='debian'
@@ -22,6 +23,7 @@ declare -A doru=(
 
 declare -A oracleJavaSuite=(
 	[artful]='artful'
+	[bionic]='bionic'
 	[buster]='devel'
 	[jessie]='artful'
 	[sid]='devel'

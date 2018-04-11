@@ -5,6 +5,7 @@ env:
   global:
   matrix:
   - VERSION=java-8-jdk/artful
+  - VERSION=java-8-jdk/bionic
   - VERSION=java-8-jdk/buster
   - VERSION=java-8-jdk/jessie
   - VERSION=java-8-jdk/sid
@@ -13,6 +14,7 @@ env:
   - VERSION=java-8-jdk/wheezy
   - VERSION=java-8-jdk/xenial
   - VERSION=java-9-jdk/artful
+  - VERSION=java-9-jdk/bionic
   - VERSION=java-9-jdk/buster
   - VERSION=java-9-jdk/jessie
   - VERSION=java-9-jdk/sid
