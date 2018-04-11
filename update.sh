@@ -23,12 +23,12 @@ declare -A doru=(
 
 declare -A oracleJavaSuite=(
 	[artful]='artful'
-	[buster]='vivid'
-	[jessie]='vivid'
-	[sid]='vivid'
-	[stretch]='vivid'
+	[buster]='devel'
+	[jessie]='artful'
+	[sid]='devel'
+	[stretch]='bionic'
 	[trusty]='trusty'
-	[wheezy]='vivid'
+	[wheezy]='xenial'
 	[xenial]='xenial'
 	[zesty]='zesty'
 )
