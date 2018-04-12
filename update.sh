@@ -32,6 +32,11 @@ declare -A addSuites=(
 	[9-stretch]='stretch-backports'
 )
 
+declare -A needBackportPpaSuites=(
+	[7-xenial]='yes'
+	[8-trusty]='yes'
+)
+
 declare -A buildpackDepsVariants=(
 	[jre]='curl'
 	[jdk]='scm'
@@ -185,6 +190,7 @@ for version in "${versions[@]}"; do
 
 	suite="${version##*/}"
 	addSuite="${addSuites[$javaVersion-$suite]}"
+	needBackportPpa="${needBackportPpaSuites[$javaVersion-$suite]}"
 	buildpackDepsVariant="${buildpackDepsVariants[$javaType]}"
 
 	needCaHack=
@@ -254,6 +260,16 @@ RUN set -ex; \\
 		mkdir -p /usr/share/man/man1; \\
 	fi; \\
 	\\
+EOD
+
+	if [ -n "$needBackportPpa" ]; then
+		cat >> "$version/Dockerfile" <<EOD
+	echo "deb http://ppa.launchpad.net/openjdk-r/ppa/ubuntu $suite main" > /etc/apt/sources.list.d/openjdk-r-ubuntu-ppa-$suite.list; \\
+	apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EB9B1D8886F44E2A; \\
+EOD
+	fi
+
+	cat >> "$version/Dockerfile" <<EOD
 	apt-get update; \\
 	apt-get install --no-install-recommends -y \\
 		$debianPackage \\
