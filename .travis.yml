@@ -23,7 +23,6 @@ env:
   - VERSION=9-jre/sid VARIANT=slim
   - VERSION=9-jre/buster
   - VERSION=9-jre/buster VARIANT=slim
-  - VERSION=9-jre/bionic
   - VERSION=9-jre/artful
   - VERSION=9-jdk/xenial
   - VERSION=9-jdk/stretch
@@ -32,7 +31,6 @@ env:
   - VERSION=9-jdk/sid VARIANT=slim
   - VERSION=9-jdk/buster
   - VERSION=9-jdk/buster VARIANT=slim
-  - VERSION=9-jdk/bionic
   - VERSION=9-jdk/artful
   - VERSION=8-jre/xenial
   - VERSION=8-jre/trusty
