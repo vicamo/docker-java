@@ -4,68 +4,76 @@ services: docker
 env:
   global:
   matrix:
-  - VERSION=6-jdk/trusty
-  - VERSION=6-jdk/wheezy
-  - VERSION=6-jdk/wheezy VARIANT=slim
-  - VERSION=6-jre/trusty
-  - VERSION=6-jre/wheezy
-  - VERSION=6-jre/wheezy VARIANT=slim
-  - VERSION=7-jdk/jessie
-  - VERSION=7-jdk/jessie VARIANT=alpine
-  - VERSION=7-jdk/jessie VARIANT=slim
-  - VERSION=7-jdk/trusty
-  - VERSION=7-jdk/wheezy
-  - VERSION=7-jdk/xenial
-  - VERSION=7-jre/jessie
-  - VERSION=7-jre/jessie VARIANT=alpine
-  - VERSION=7-jre/jessie VARIANT=slim
-  - VERSION=7-jre/trusty
-  - VERSION=7-jre/wheezy
-  - VERSION=7-jre/xenial
-  - VERSION=8-jdk/artful
-  - VERSION=8-jdk/bionic
-  - VERSION=8-jdk/buster
-  - VERSION=8-jdk/buster VARIANT=slim
-  - VERSION=8-jdk/jessie
-  - VERSION=8-jdk/jessie VARIANT=slim
-  - VERSION=8-jdk/sid
-  - VERSION=8-jdk/sid VARIANT=slim
-  - VERSION=8-jdk/stretch
-  - VERSION=8-jdk/stretch VARIANT=alpine
-  - VERSION=8-jdk/stretch VARIANT=slim
-  - VERSION=8-jdk/trusty
-  - VERSION=8-jdk/xenial
-  - VERSION=8-jre/artful
-  - VERSION=8-jre/bionic
-  - VERSION=8-jre/buster
-  - VERSION=8-jre/buster VARIANT=slim
-  - VERSION=8-jre/jessie
-  - VERSION=8-jre/jessie VARIANT=slim
-  - VERSION=8-jre/sid
-  - VERSION=8-jre/sid VARIANT=slim
-  - VERSION=8-jre/stretch
-  - VERSION=8-jre/stretch VARIANT=alpine
-  - VERSION=8-jre/stretch VARIANT=slim
-  - VERSION=8-jre/trusty
-  - VERSION=8-jre/xenial
-  - VERSION=9-jdk/artful
-  - VERSION=9-jdk/bionic
-  - VERSION=9-jdk/buster
-  - VERSION=9-jdk/buster VARIANT=slim
-  - VERSION=9-jdk/sid
-  - VERSION=9-jdk/sid VARIANT=slim
-  - VERSION=9-jdk/stretch
-  - VERSION=9-jdk/stretch VARIANT=slim
-  - VERSION=9-jdk/xenial
-  - VERSION=9-jre/artful
-  - VERSION=9-jre/bionic
-  - VERSION=9-jre/buster
-  - VERSION=9-jre/buster VARIANT=slim
-  - VERSION=9-jre/sid
-  - VERSION=9-jre/sid VARIANT=slim
+  - VERSION=10-jre/sid
+  - VERSION=10-jre/sid VARIANT=slim
+  - VERSION=10-jre/buster
+  - VERSION=10-jre/buster VARIANT=slim
+  - VERSION=10-jdk/sid
+  - VERSION=10-jdk/sid VARIANT=slim
+  - VERSION=10-jdk/buster
+  - VERSION=10-jdk/buster VARIANT=slim
+  - VERSION=9-jre/xenial
   - VERSION=9-jre/stretch
   - VERSION=9-jre/stretch VARIANT=slim
-  - VERSION=9-jre/xenial
+  - VERSION=9-jre/sid
+  - VERSION=9-jre/sid VARIANT=slim
+  - VERSION=9-jre/buster
+  - VERSION=9-jre/buster VARIANT=slim
+  - VERSION=9-jre/bionic
+  - VERSION=9-jre/artful
+  - VERSION=9-jdk/xenial
+  - VERSION=9-jdk/stretch
+  - VERSION=9-jdk/stretch VARIANT=slim
+  - VERSION=9-jdk/sid
+  - VERSION=9-jdk/sid VARIANT=slim
+  - VERSION=9-jdk/buster
+  - VERSION=9-jdk/buster VARIANT=slim
+  - VERSION=9-jdk/bionic
+  - VERSION=9-jdk/artful
+  - VERSION=8-jre/xenial
+  - VERSION=8-jre/trusty
+  - VERSION=8-jre/stretch
+  - VERSION=8-jre/stretch VARIANT=slim
+  - VERSION=8-jre/stretch VARIANT=alpine
+  - VERSION=8-jre/sid
+  - VERSION=8-jre/sid VARIANT=slim
+  - VERSION=8-jre/jessie
+  - VERSION=8-jre/jessie VARIANT=slim
+  - VERSION=8-jre/buster
+  - VERSION=8-jre/buster VARIANT=slim
+  - VERSION=8-jre/bionic
+  - VERSION=8-jre/artful
+  - VERSION=8-jdk/xenial
+  - VERSION=8-jdk/trusty
+  - VERSION=8-jdk/stretch
+  - VERSION=8-jdk/stretch VARIANT=slim
+  - VERSION=8-jdk/stretch VARIANT=alpine
+  - VERSION=8-jdk/sid
+  - VERSION=8-jdk/sid VARIANT=slim
+  - VERSION=8-jdk/jessie
+  - VERSION=8-jdk/jessie VARIANT=slim
+  - VERSION=8-jdk/buster
+  - VERSION=8-jdk/buster VARIANT=slim
+  - VERSION=8-jdk/bionic
+  - VERSION=8-jdk/artful
+  - VERSION=7-jre/xenial
+  - VERSION=7-jre/wheezy
+  - VERSION=7-jre/trusty
+  - VERSION=7-jre/jessie
+  - VERSION=7-jre/jessie VARIANT=slim
+  - VERSION=7-jre/jessie VARIANT=alpine
+  - VERSION=7-jdk/xenial
+  - VERSION=7-jdk/wheezy
+  - VERSION=7-jdk/trusty
+  - VERSION=7-jdk/jessie
+  - VERSION=7-jdk/jessie VARIANT=slim
+  - VERSION=7-jdk/jessie VARIANT=alpine
+  - VERSION=6-jre/wheezy
+  - VERSION=6-jre/wheezy VARIANT=slim
+  - VERSION=6-jre/trusty
+  - VERSION=6-jdk/wheezy
+  - VERSION=6-jdk/wheezy VARIANT=slim
+  - VERSION=6-jdk/trusty
 
 matrix:
   fast_finish: true

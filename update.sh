@@ -9,6 +9,9 @@ if [ ${#versions[@]} -eq 0 ]; then
 fi
 versions=( "${versions[@]%/}" )
 
+# sort version numbers with lowest first
+IFS=$'\n'; versions=( $(echo "${versions[*]}" | sort -V) ); unset IFS
+
 declare -A doru=(
 	[artful]='ubuntu'
 	[bionic]='ubuntu'
