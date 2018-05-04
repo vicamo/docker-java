@@ -187,9 +187,9 @@ template-contribute-footer() {
 travisEnv=
 appveyorEnv=
 for version in "${versions[@]}"; do
-	javaVersion="${version%%/*}" # "6-jdk"
+	javaVersion="${version%%/*}" # "7-jdk"
 	javaType="${javaVersion##*-}" # "jdk"
-	javaVersion="${javaVersion%-*}" # "6"
+	javaVersion="${javaVersion%-*}" # "7"
 
 	suite="${version##*/}"
 	addSuite="${addSuites[$javaVersion-$suite]}"
