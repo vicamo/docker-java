@@ -6,8 +6,14 @@ env:
   matrix:
   - VERSION=11-jre/sid
   - VERSION=11-jre/sid VARIANT=slim
+  - VERSION=11-jre/buster
+  - VERSION=11-jre/buster VARIANT=slim
+  - VERSION=11-jre/bionic
   - VERSION=11-jdk/sid
   - VERSION=11-jdk/sid VARIANT=slim
+  - VERSION=11-jdk/buster
+  - VERSION=11-jdk/buster VARIANT=slim
+  - VERSION=11-jdk/bionic
   - VERSION=10-jre/sid
   - VERSION=10-jre/sid VARIANT=slim
   - VERSION=10-jre/buster
