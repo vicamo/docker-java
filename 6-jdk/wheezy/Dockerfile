@@ -47,7 +47,7 @@ RUN set -ex; \
 	fi; \
 	\
 	apt-get update; \
-	apt-get install --no-install-recommends -y \
+	apt-get install -y --no-install-recommends \
 		openjdk-6-jdk \
 	; \
 	rm -rf /var/lib/apt/lists/*; \

@@ -274,7 +274,7 @@ EOD
 
 	cat >> "$version/Dockerfile" <<EOD
 	apt-get update; \\
-	apt-get install --no-install-recommends -y \\
+	apt-get install -y --no-install-recommends \\
 		$debianPackage \\
 EOD
 	if [ "$needCaHack" ]; then

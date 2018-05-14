@@ -49,7 +49,7 @@ RUN set -ex; \
 	echo "deb http://ppa.launchpad.net/openjdk-r/ppa/ubuntu xenial main" > /etc/apt/sources.list.d/openjdk-r-ubuntu-ppa-xenial.list; \
 	apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EB9B1D8886F44E2A; \
 	apt-get update; \
-	apt-get install --no-install-recommends -y \
+	apt-get install -y --no-install-recommends \
 		openjdk-7-jdk \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
