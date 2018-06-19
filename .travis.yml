@@ -22,8 +22,6 @@ env:
   - SUITE=sid VERSION=11 VARIANT=slim
   - SUITE=sid VERSION=10
   - SUITE=sid VERSION=10 VARIANT=slim
-  - SUITE=sid VERSION=9
-  - SUITE=sid VERSION=9 VARIANT=slim
   - SUITE=sid VERSION=8
   - SUITE=sid VERSION=8 VARIANT=slim
   - SUITE=jessie VERSION=8
@@ -35,8 +33,6 @@ env:
   - SUITE=buster VERSION=11 VARIANT=slim
   - SUITE=buster VERSION=10
   - SUITE=buster VERSION=10 VARIANT=slim
-  - SUITE=buster VERSION=9
-  - SUITE=buster VERSION=9 VARIANT=slim
   - SUITE=buster VERSION=8
   - SUITE=buster VERSION=8 VARIANT=slim
   - SUITE=bionic VERSION=11
