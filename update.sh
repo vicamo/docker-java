@@ -27,7 +27,7 @@ declare -A doru=(
 declare -A alpineVersions=(
 	[7]='3.7'
 	[8]='3.7'
-	#[9]='TBD' # there is no openjdk9 in Alpine yet (https://pkgs.alpinelinux.org/packages?name=openjdk9*&arch=x86_64)
+	#[10]='TBD' # there is no openjdk10 in Alpine yet (https://pkgs.alpinelinux.org/packages?name=openjdk10*&arch=x86_64)
 )
 
 declare -A addSuites=(
@@ -416,8 +416,8 @@ EOD
 			elif [[ "$ojdkbuildVersion" == 1.* ]]; then
 				# convert "1.8.0.111-3" into "8u111"
 				ojdkJavaVersion="$(echo "$ojdkbuildVersion" | cut -d. -f2,4 | cut -d- -f1 | tr . u)"
-			elif [[ "$ojdkbuildVersion" == 9.* ]]; then
-				# convert "9.0.1-1.b01" into "9.0.1"
+			elif [[ "$ojdkbuildVersion" == 10.* ]]; then
+				# convert "10.0.1-1.b10" into "10.0.1"
 				ojdkJavaVersion="${ojdkbuildVersion%%-*}"
 			else
 				echo >&2 "error: unable to parse ojdkbuild version $ojdkbuildVersion"
