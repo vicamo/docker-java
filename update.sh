@@ -16,6 +16,7 @@ declare -A doru=(
 	[artful]='ubuntu'
 	[bionic]='ubuntu'
 	[buster]='debian'
+	[cosmic]='ubuntu'
 	[jessie]='debian'
 	[sid]='debian'
 	[stretch]='debian'

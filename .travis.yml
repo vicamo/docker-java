@@ -29,6 +29,8 @@ env:
   - SUITE=jessie VERSION=7
   - SUITE=jessie VERSION=7 VARIANT=slim
   - SUITE=jessie VERSION=7 VARIANT=alpine
+  - SUITE=cosmic VERSION=11
+  - SUITE=cosmic VERSION=8
   - SUITE=buster VERSION=11
   - SUITE=buster VERSION=11 VARIANT=slim
   - SUITE=buster VERSION=10
