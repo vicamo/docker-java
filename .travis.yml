@@ -13,8 +13,6 @@ env:
   - SUITE=trusty VERSION=8
   - SUITE=trusty VERSION=7
   - SUITE=trusty VERSION=6
-  - SUITE=stretch VERSION=9
-  - SUITE=stretch VERSION=9 VARIANT=slim
   - SUITE=stretch VERSION=8
   - SUITE=stretch VERSION=8 VARIANT=slim
   - SUITE=stretch VERSION=8 VARIANT=alpine
