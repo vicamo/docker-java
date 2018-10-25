@@ -20,7 +20,7 @@ RUN set -x \
 		dirmngr \
 		gnupg \
 		unzip \
-	&& (echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu artful main" > /etc/apt/sources.list.d/webupd8team-ubuntu-java.list) \
+	&& (echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu bionic main" > /etc/apt/sources.list.d/webupd8team-ubuntu-java.list) \
 	&& apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C2518248EEA14886 \
 	&& (echo "debconf shared/accepted-oracle-license-v1-1 select true" | debconf-set-selections) \
 	&& (echo "debconf shared/accepted-oracle-license-v1-1 seen true" | debconf-set-selections) \

@@ -4,7 +4,6 @@ services: docker
 env:
   global:
   matrix:
-  - VERSION=java-8-jdk/artful
   - VERSION=java-8-jdk/bionic
   - VERSION=java-8-jdk/buster
   - VERSION=java-8-jdk/jessie
