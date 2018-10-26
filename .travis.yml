@@ -13,8 +13,6 @@ env:
   - SUITE=trusty VERSION=8
   - SUITE=trusty VERSION=7
   - SUITE=trusty VERSION=6
-  - SUITE=stretch VERSION=9
-  - SUITE=stretch VERSION=9 VARIANT=slim
   - SUITE=stretch VERSION=8
   - SUITE=stretch VERSION=8 VARIANT=slim
   - SUITE=stretch VERSION=8 VARIANT=alpine
@@ -45,8 +43,6 @@ env:
 matrix:
   fast_finish: true
   allow_failures:
-  - env: SUITE=sid VERSION=11
-  - env: SUITE=sid VERSION=11 VARIANT=slim
   - env: SUITE=xenial VERSION=9
 
 branches:

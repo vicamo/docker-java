@@ -25,10 +25,10 @@ declare -A doru=(
 	[xenial]='ubuntu'
 )
 
+defaultAlpineVersion='3.8'
 declare -A alpineVersions=(
-	[7]='3.7'
-	[8]='3.7'
-	#[10]='TBD' # there is no openjdk10 in Alpine yet (https://pkgs.alpinelinux.org/packages?name=openjdk10*&arch=x86_64)
+	#[8]='3.7'
+	#[10]='TBD' # there is no openjdk10 in Alpine yet (https://pkgs.alpinelinux.org/packages?name=openjdk*-jre&arch=x86_64)
 )
 
 declare -A addSuites=(
@@ -319,7 +319,7 @@ EOD
 		template-contribute-footer >> "$dir/Dockerfile"
 
 		if [ -d "$dir/alpine" ]; then
-			alpineVersion="${alpineVersions[$javaVersion]}"
+			alpineVersion="${alpineVersions[$javaVersion]:-$defaultAlpineVersion}"
 			alpinePackage="openjdk$javaVersion"
 			alpineJavaHome="/usr/lib/jvm/java-1.${javaVersion}-openjdk"
 			alpinePathAdd="$alpineJavaHome/jre/bin:$alpineJavaHome/bin"
@@ -380,7 +380,7 @@ EOD
 			#   - swap "openjdk-N-(jre|jdk) for the -headless versions, where available (openjdk-8+ only for JDK variants)
 			sed -r \
 				-e 's!^FROM buildpack-deps:([^-]+)(-.+)?!FROM debian:\1-slim!' \
-				-e 's!(openjdk-([0-9]+-jre|([89]\d*|\d\d+)-jdk))=!\1-headless=!g' \
+				-e 's!(openjdk-([0-9]+-jre|([89][0-9]*|[0-9][0-9]+)-jdk))=!\1-headless=!g' \
 				"$dir/Dockerfile" > "$dir/slim/Dockerfile"
 		fi
 
