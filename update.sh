@@ -17,6 +17,7 @@ declare -A doru=(
 	[bionic]='ubuntu'
 	[buster]='debian'
 	[cosmic]='ubuntu'
+	[disco]='ubuntu'
 	[jessie]='debian'
 	[sid]='debian'
 	[stretch]='debian'
