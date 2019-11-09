@@ -10,17 +10,14 @@ env:
   - SUITE=trusty VERSION=8
   - SUITE=trusty VERSION=7
   - SUITE=trusty VERSION=6
+  - SUITE=stretch VERSION=11
+  - SUITE=stretch VERSION=11 VARIANT=slim
+  - SUITE=stretch VERSION=11 VARIANT=alpine
   - SUITE=stretch VERSION=8
   - SUITE=stretch VERSION=8 VARIANT=slim
   - SUITE=stretch VERSION=8 VARIANT=alpine
-  - SUITE=sid VERSION=11
-  - SUITE=sid VERSION=11 VARIANT=slim
-  - SUITE=sid VERSION=10
-  - SUITE=sid VERSION=10 VARIANT=slim
-  - SUITE=sid VERSION=8
-  - SUITE=sid VERSION=8 VARIANT=slim
-  - SUITE=jessie VERSION=8
-  - SUITE=jessie VERSION=8 VARIANT=slim
+  - SUITE=sid VERSION=14
+  - SUITE=sid VERSION=14 VARIANT=slim
   - SUITE=jessie VERSION=7
   - SUITE=jessie VERSION=7 VARIANT=slim
   - SUITE=jessie VERSION=7 VARIANT=alpine
@@ -28,10 +25,6 @@ env:
   - SUITE=cosmic VERSION=8
   - SUITE=buster VERSION=11
   - SUITE=buster VERSION=11 VARIANT=slim
-  - SUITE=buster VERSION=10
-  - SUITE=buster VERSION=10 VARIANT=slim
-  - SUITE=buster VERSION=8
-  - SUITE=buster VERSION=8 VARIANT=slim
   - SUITE=bionic VERSION=11
   - SUITE=bionic VERSION=8
 
