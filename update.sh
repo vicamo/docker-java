@@ -21,7 +21,6 @@ declare -A doru=(
 	[sid]='debian'
 	[stretch]='debian'
 	[trusty]='ubuntu'
-	[wheezy]='debian'
 	[xenial]='ubuntu'
 )
 

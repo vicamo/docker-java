@@ -7,9 +7,6 @@ env:
   - SUITE=xenial VERSION=9
   - SUITE=xenial VERSION=8
   - SUITE=xenial VERSION=7
-  - SUITE=wheezy VERSION=7
-  - SUITE=wheezy VERSION=6
-  - SUITE=wheezy VERSION=6 VARIANT=slim
   - SUITE=trusty VERSION=8
   - SUITE=trusty VERSION=7
   - SUITE=trusty VERSION=6
