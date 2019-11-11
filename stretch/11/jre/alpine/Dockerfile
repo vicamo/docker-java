@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM alpine:3.8
+FROM alpine:3.10
 
 # A few reasons for installing distribution-provided OpenJDK:
 #
@@ -14,7 +14,7 @@ FROM alpine:3.8
 #     really hairy.
 #
 #     For some sample build times, see Debian's buildd logs:
-#       https://buildd.debian.org/status/logs.php?pkg=openjdk-8
+#       https://buildd.debian.org/status/logs.php?pkg=openjdk-11
 
 # Default to UTF-8 file.encoding
 ENV LANG C.UTF-8
@@ -28,15 +28,15 @@ RUN { \
 		echo 'dirname "$(dirname "$(readlink -f "$(which javac || which java)")")"'; \
 	} > /usr/local/bin/docker-java-home \
 	&& chmod +x /usr/local/bin/docker-java-home
-ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
-ENV PATH $PATH:/usr/lib/jvm/java-1.8-openjdk/jre/bin:/usr/lib/jvm/java-1.8-openjdk/bin
+ENV JAVA_HOME /usr/lib/jvm/java-1.11-openjdk/jre
+ENV PATH $PATH:/usr/lib/jvm/java-1.11-openjdk/jre/bin:/usr/lib/jvm/java-1.11-openjdk/bin
 
-ENV JAVA_VERSION 8u222
-ENV JAVA_ALPINE_VERSION 8.222.10-r0
+ENV JAVA_VERSION 11u0
+ENV JAVA_ALPINE_VERSION 11.0.4_p4-r1
 
 RUN set -x \
 	&& apk add --no-cache \
-		openjdk8="$JAVA_ALPINE_VERSION" \
+		openjdk11-jre="$JAVA_ALPINE_VERSION" \
 	&& [ "$JAVA_HOME" = "$(docker-java-home)" ]
 
 # If you're reading this and have any feedback on how this image could be

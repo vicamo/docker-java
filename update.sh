@@ -13,7 +13,6 @@ versions=( "${versions[@]%/}" )
 IFS=$'\n'; versions=( $(echo "${versions[*]}" | sort -V) ); unset IFS
 
 declare -A doru=(
-	[artful]='ubuntu'
 	[bionic]='ubuntu'
 	[buster]='debian'
 	[cosmic]='ubuntu'
@@ -21,19 +20,17 @@ declare -A doru=(
 	[sid]='debian'
 	[stretch]='debian'
 	[trusty]='ubuntu'
-	[wheezy]='debian'
 	[xenial]='ubuntu'
 )
 
 defaultAlpineVersion='3.8'
 declare -A alpineVersions=(
-	#[8]='3.7'
+	[11]='3.10'
 	#[10]='TBD' # there is no openjdk10 in Alpine yet (https://pkgs.alpinelinux.org/packages?name=openjdk*-jre&arch=x86_64)
 )
 
 declare -A addSuites=(
-	[8-jessie]='jessie-backports'
-	[9-stretch]='stretch-backports'
+	[11-stretch]='stretch-backports'
 )
 
 declare -A needBackportPpaSuites=(
