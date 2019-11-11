@@ -13,7 +13,6 @@ versions=( "${versions[@]%/}" )
 IFS=$'\n'; versions=( $(echo "${versions[*]}" | sort -V) ); unset IFS
 
 declare -A doru=(
-	[artful]='ubuntu'
 	[bionic]='ubuntu'
 	[buster]='debian'
 	[cosmic]='ubuntu'

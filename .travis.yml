@@ -34,8 +34,6 @@ env:
   - SUITE=buster VERSION=8 VARIANT=slim
   - SUITE=bionic VERSION=11
   - SUITE=bionic VERSION=8
-  - SUITE=artful VERSION=9
-  - SUITE=artful VERSION=8
 
 matrix:
   fast_finish: true
